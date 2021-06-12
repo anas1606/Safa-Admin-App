@@ -23,7 +23,11 @@ class _InputEmailState extends State<InputEmail> {
             color: Colors.white,
           ),
           decoration: InputDecoration(
-            border: InputBorder.none,
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white70,
+              ),
+            ),
             fillColor: Colors.lightBlueAccent,
             labelText: 'Name',
             labelStyle: TextStyle(

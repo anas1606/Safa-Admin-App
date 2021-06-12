@@ -24,7 +24,11 @@ class _PasswordInputState extends State<PasswordInput> {
           ),
           obscureText: true,
           decoration: InputDecoration(
-            border: InputBorder.none,
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white70,
+              ),
+            ),
             labelText: 'Password',
             labelStyle: TextStyle(
               fontSize: 18,
