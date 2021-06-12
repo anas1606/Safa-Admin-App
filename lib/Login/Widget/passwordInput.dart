@@ -24,7 +24,12 @@ class _PasswordInputState extends State<PasswordInput> {
           ),
           obscureText: true,
           decoration: InputDecoration(
-            border: UnderlineInputBorder(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white70,
+              ),
+            ),
+            focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.white70,
               ),

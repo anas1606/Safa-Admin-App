@@ -5,6 +5,8 @@ import 'package:safa_admin/DashBoard%20Internals/category.dart';
 import 'package:safa_admin/Dashboard.dart';
 import 'package:safa_admin/Login/LoginPage.dart';
 import 'package:safa_admin/splashScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -35,15 +37,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String storedSession;
+  getSessionToken() async {
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      
+      var session = pref.getString('session');
+      storedSession = session;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   void startTimer() {
     Timer(Duration(milliseconds: 5400), () {
-      Navigator.of(context).pushReplacementNamed("loginpage");
+      print(storedSession);
+      try {
+        if (storedSession == null)
+          Navigator.of(context).pushReplacementNamed("loginpage");
+        else
+          Navigator.of(context).pushReplacementNamed("dasboard");
+      } catch (e) {
+        print(e);
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
+    getSessionToken();
     startTimer();
   }
 

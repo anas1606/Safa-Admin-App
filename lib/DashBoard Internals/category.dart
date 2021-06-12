@@ -6,6 +6,7 @@ import 'package:safa_admin/chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:safa_admin/listinfoCard.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -23,8 +24,12 @@ class _CategoryState extends State<Category> {
   var data;
   var result;
 
-  var token =
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmFzQGdtYWlsLmNvbSIsInJvbGUiOlsiVVNFUiJdLCJ1c2VyVHlwZSI6WyJVU0VSIl0sImV4cCI6MTYyMzgzNTEzOSwiaWF0IjoxNjIzMjMwMzM5LCJhdXRob3JpdGllcyI6WyJBRE1JTiJdfQ.U_Upnd6cKgGuOeFpJxdOiF_7cI9SiwWJJAaI0ITTGjIOmQAQXS_cmHDPczuSc53Iwvn-ToWhq1JzcW3EO1rvtA";
+  String token;
+  gettoken() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var session = pref.getString('session');
+    token = session;
+  }
 
   getdata() async {
     try {
@@ -32,15 +37,18 @@ class _CategoryState extends State<Category> {
       var res = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
+        'Authorization': "Bearer $token",
       });
       data = jsonDecode(res.body);
-
-      setState(() {
-        result = data["result"];
-        data = data["data"];
-      });
+      if (data["statusCode"] == 401)
+        Navigator.of(context).pushReplacementNamed("loginpage");
+      else
+        setState(() {
+          result = data["result"];
+          data = data["data"];
+        });
     } catch (e) {
+      print("error");
       print(e);
     }
   }
@@ -87,10 +95,15 @@ class _CategoryState extends State<Category> {
     });
   }
 
+  void startUp() async {
+    await gettoken();
+    getdata();
+  }
+
   @override
   void initState() {
     super.initState();
-    getdata();
+    startUp();
   }
 
   @override

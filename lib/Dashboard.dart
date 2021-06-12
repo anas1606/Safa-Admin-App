@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:safa_admin/DashBoardDesign.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:safa_admin/Drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key key}) : super(key: key);
@@ -14,9 +15,17 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
   TabController _tabController;
 
+  String token;
+  gettoken() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var session = pref.getString('session');
+    token = session;
+  }
+
   @override
   void initState() {
     super.initState();
+    gettoken();
     _tabController = new TabController(vsync: this, length: 2);
     _tabController.addListener(_handleTabSelection);
   }
@@ -44,7 +53,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   ),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                                      child: Text("DashBoard",
+                    child: Text("DashBoard",
                         style: TextStyle(
                           color: _tabController.index == 0
                               ? Colors.white

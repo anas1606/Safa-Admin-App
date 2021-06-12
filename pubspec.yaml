@@ -33,6 +33,7 @@ dependencies:
   flutter_spinkit: ^5.0.0
   percent_indicator: "^2.1.7+2"
   toast: ^0.1.5
+  shared_preferences: ^0.5.12+4
 
 dev_dependencies:
   flutter_test:

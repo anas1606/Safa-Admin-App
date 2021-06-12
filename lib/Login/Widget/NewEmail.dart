@@ -18,7 +18,12 @@ class _NewEmailState extends State<NewEmail> {
             color: Colors.white,
           ),
           decoration: InputDecoration(
-            border: UnderlineInputBorder(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white70,
+              ),
+            ),
+            focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.white70,
               ),

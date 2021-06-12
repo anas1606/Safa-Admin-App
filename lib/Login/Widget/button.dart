@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ButtonLogin extends StatefulWidget {
   ButtonLogin({
@@ -14,6 +19,48 @@ class ButtonLogin extends StatefulWidget {
 }
 
 class _ButtonLoginState extends State<ButtonLogin> {
+  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  var data;
+  bool processFlag = true;
+
+  setToken(String token) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      print(token);
+      pref.setString('session', token);
+    });
+  }
+
+  login() async {
+    setState(() {
+      processFlag = false;
+    });
+
+    var url = "$prefix/api/admin/login";
+    var res = await http.post(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'emailId': widget.email.text,
+          'password': widget.pswd.text
+        }));
+
+    data = jsonDecode(res.body);
+
+    setState(() {
+      if (data["statusCode"] == 200) {
+        data = data["data"];
+        setToken(data["sessionToken"]);
+        Navigator.of(context).pushReplacementNamed("dasboard");
+      } else
+        Dialog(data["message"], data["statusCode"]);
+
+      processFlag = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -41,9 +88,7 @@ class _ButtonLoginState extends State<ButtonLogin> {
           onPressed: () {
             print(widget.email.text);
             print(widget.pswd.text);
-            if (widget.email.text == "admin" && widget.pswd.text == "unlock") {
-              Navigator.of(context).pushReplacementNamed("dasboard");
-            }
+            login();
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -56,14 +101,69 @@ class _ButtonLoginState extends State<ButtonLogin> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Icon(
-                Icons.arrow_forward,
-                color: Colors.blueGrey[700],
-              ),
+              (processFlag)
+                  ? Icon(
+                      Icons.arrow_forward,
+                      color: Colors.blueGrey[700],
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: SpinKitHourGlass(
+                        size: 20,
+                        duration: Duration(seconds: 1),
+                        color: Colors.blueGrey[900],
+                      ),
+                    ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Dialog(String msg, int code) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            buttonPadding: EdgeInsets.all(15),
+            backgroundColor: Colors.blueGrey[900],
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  size: 30,
+                  color: Colors.yellow,
+                ),
+                Text(
+                  "  Invalid User Detail",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                )
+              ],
+            ),
+            content: Text(
+              "$msg \nErrorCode: $code",
+              style: TextStyle(
+                color: Colors.white70,
+              ),
+            ),
+            actions: <Widget>[
+              RaisedButton(
+                color: Colors.green,
+                child: Text("Ok", style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+              ),
+            ],
+            actionsPadding: EdgeInsets.only(right: 100),
+          );
+        });
   }
 }
