@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safa_admin/DashBoard%20Internals/Product/detailPage.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/iteamCard.dart';
 
 class ProductBody extends StatefulWidget {
@@ -86,7 +87,12 @@ class _ProductBodyState extends State<ProductBody> {
                       childAspectRatio: 0.75,
                       mainAxisSpacing: 25,
                       crossAxisSpacing: 15),
-                  itemBuilder: (context, index) => IteamCard()),
+                  itemBuilder: (context, index) => IteamCard(
+                      press: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (contex) => DetailPage()),
+                          ))),
             ),
           )
         ],

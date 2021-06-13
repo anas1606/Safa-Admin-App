@@ -50,6 +50,7 @@ class _ProductState extends State<Product> {
           ],
         ),
         elevation: 15.0,
+        shadowColor: Colors.blueGrey[550],
       ),
       body: ProductBody(names: getlist(), model: getlist()),
     );
