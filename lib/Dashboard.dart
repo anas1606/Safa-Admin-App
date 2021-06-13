@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safa_admin/DashBoard%20Internals/Product/Produts.dart';
 import 'package:safa_admin/DashBoardDesign.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:safa_admin/Drawer.dart';
@@ -71,7 +72,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   ),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text("Manage",
+                    child: Text("Manage Products",
                         style: TextStyle(
                           color: _tabController.index == 1
                               ? Colors.white
@@ -127,12 +128,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               children: <Widget>[
                 Container(child: DashBoardDesign()),
                 Container(
-                  child: Center(
-                    child: Icon(
-                      Icons.add_business,
-                      size: 130,
-                    ),
-                  ),
+                  child: Product(),
                 ),
               ],
             ),
