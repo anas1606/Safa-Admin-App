@@ -9,9 +9,12 @@ class DashBoardDesign extends StatefulWidget {
 }
 
 class _DashBoardDesignState extends State<DashBoardDesign> {
-
   Widget _buildSingleContainer(
-      {IconData icon, String text, int count, BuildContext contex,String route}) {
+      {IconData icon,
+      String text,
+      int count,
+      BuildContext contex,
+      String route}) {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).pushNamed(route);
@@ -114,90 +117,11 @@ class _DashBoardDesignState extends State<DashBoardDesign> {
       crossAxisSpacing: 15,
       children: <Widget>[
         _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 3,
-          contex: context,
-          route: "category"
-        ),
-        _buildSingleContainer(
-          icon: Icons.car_repair,
-          text: "Vehicale Type",
-          count: 15,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.menu_book_sharp,
-          text: "Products",
-          count: 100,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
-        _buildSingleContainer(
-          icon: Icons.category,
-          text: "Category",
-          count: 1,
-          contex: context,
-        ),
+            icon: Icons.category,
+            text: "Category",
+            count: 3,
+            contex: context,
+            route: "category"),
       ],
     );
   }

@@ -31,6 +31,14 @@ class _CategoryState extends State<Category> {
     token = session;
   }
 
+  validateReq(var data) async {
+    if (data["statusCode"] == 401) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.remove('session');
+      Navigator.of(context).pushReplacementNamed("loginpage");
+    }
+  }
+
   getdata() async {
     try {
       var url = "$prefix/api/admin/category/list";
@@ -40,15 +48,12 @@ class _CategoryState extends State<Category> {
         'Authorization': "Bearer $token",
       });
       data = jsonDecode(res.body);
-      if (data["statusCode"] == 401)
-        Navigator.of(context).pushReplacementNamed("loginpage");
-      else
-        setState(() {
-          result = data["result"];
-          data = data["data"];
-        });
+      validateReq(data);
+      setState(() {
+        result = data["result"];
+        data = data["data"];
+      });
     } catch (e) {
-      print("error");
       print(e);
     }
   }
