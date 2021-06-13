@@ -18,11 +18,17 @@ class _IteamCardState extends State<IteamCard> {
         Expanded(
           child: Container(
             padding: EdgeInsets.all(10),
+            width: 170,
             decoration: BoxDecoration(
               color: Colors.blueGrey[900],
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Image.asset("asset/pic2.jpeg"),
+            child: Image.asset("asset/fender.png"),
+            /*Icon(
+              Icons.image_outlined,
+              size: 80,
+              color: Colors.white10,
+            ),*/
           ),
         ),
         Padding(
