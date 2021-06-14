@@ -52,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void startTimer() {
     Timer(Duration(milliseconds: 5400), () {
-      print(storedSession);
       try {
         if (storedSession == null)
           Navigator.of(context).pushReplacementNamed("loginpage");
