@@ -81,18 +81,18 @@ class _ProductBodyState extends State<ProductBody> {
             child: Padding(
               padding: const EdgeInsets.all(15),
               child: GridView.builder(
-                  itemCount: names.length * 10,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.75,
-                      mainAxisSpacing: 25,
-                      crossAxisSpacing: 15),
-                  itemBuilder: (context, index) => IteamCard(
-                      press: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (contex) => DetailPage()),
-                          ))),
+                itemCount: names.length * 10,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    mainAxisSpacing: 25,
+                    crossAxisSpacing: 15),
+                itemBuilder: (context, index) => IteamCard(
+                    press: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (contex) => DetailPage()),
+                        )),
+              ),
             ),
           )
         ],

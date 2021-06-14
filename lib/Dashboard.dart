@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/Produts.dart';
 import 'package:safa_admin/DashBoardDesign.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
-import 'package:safa_admin/Drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashboard extends StatefulWidget {
@@ -134,8 +133,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
             ),
           ),
         ),
-        drawer: MyDrawer(),
-        drawerEdgeDragWidth: 40,
       ),
     );
   }
