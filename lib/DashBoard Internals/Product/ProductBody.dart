@@ -33,7 +33,7 @@ class _ProductBodyState extends State<ProductBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blueGrey[800],
+      color: Colors.blueGrey[900],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -79,14 +79,16 @@ class _ProductBodyState extends State<ProductBody> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(10),
               child: GridView.builder(
                 itemCount: names.length * 10,
+                padding: EdgeInsets.only(top: 10.0),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    mainAxisSpacing: 25,
-                    crossAxisSpacing: 15),
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  mainAxisSpacing: 25,
+                  crossAxisSpacing: 15,
+                ),
                 itemBuilder: (context, index) => IteamCard(
                     press: () => Navigator.push(
                           context,

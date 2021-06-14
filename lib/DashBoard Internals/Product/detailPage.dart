@@ -58,12 +58,14 @@ class _DetailPageState extends State<DetailPage> {
                 //height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      colors: [Colors.blue[200], Colors.transparent]),
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [Colors.white30, Colors.transparent],
+                  ),
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      topRight: Radius.circular(50)),
+                    topLeft: Radius.circular(50),
+                    topRight: Radius.circular(50),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +87,7 @@ class _DetailPageState extends State<DetailPage> {
                                 "EICHER",
                                 style: TextStyle(
                                   color: Colors.amberAccent,
-                                  fontSize: 24,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -107,7 +109,7 @@ class _DetailPageState extends State<DetailPage> {
                                 "Pro 3110",
                                 style: TextStyle(
                                   color: Colors.amberAccent,
-                                  fontSize: 24,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -129,7 +131,7 @@ class _DetailPageState extends State<DetailPage> {
                                 "0.350 Kg",
                                 style: TextStyle(
                                   color: Colors.amberAccent,
-                                  fontSize: 24,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -139,7 +141,7 @@ class _DetailPageState extends State<DetailPage> {
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 40.0),
+                      padding: const EdgeInsets.only(top: 80.0),
                       child: Container(
                         height: 200,
                         width: 370,
@@ -173,26 +175,29 @@ class _DetailPageState extends State<DetailPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                  text: "Price\n",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline6
-                                      .copyWith(
-                                          color: Colors.white54,
-                                          fontFamily: "fugzOne")),
-                              TextSpan(
-                                  text: "Rs 5000",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline5
-                                      .copyWith(
-                                          color: Colors.amber[300],
-                                          fontFamily: "fugzOne")),
-                            ],
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20.0),
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                    text: "Price\n",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .copyWith(
+                                            color: Colors.white54,
+                                            fontFamily: "fugzOne")),
+                                TextSpan(
+                                    text: "Rs 5000",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline5
+                                        .copyWith(
+                                            color: Colors.amber[300],
+                                            fontFamily: "fugzOne")),
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(width: 15),
@@ -239,11 +244,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
           );
         else
-          return Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white30),
-              ),
-              child: Image.asset(images[index]));
+          return Container(child: Image.asset(images[index]));
       },
     );
   }
