@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NewNome extends StatefulWidget {
+  NewNome({Key key, @required this.textController}) : super(key: key);
+
+  final TextEditingController textController;
   @override
   _NewNomeState createState() => _NewNomeState();
 }
@@ -14,6 +17,7 @@ class _NewNomeState extends State<NewNome> {
         height: 60,
         width: MediaQuery.of(context).size.width,
         child: TextField(
+          controller: widget.textController,
           style: TextStyle(
             color: Colors.white,
           ),

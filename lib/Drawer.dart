@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 import 'package:safa_admin/Dashboard.dart';
 import 'package:safa_admin/Login/NewUser.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key key}) : super(key: key);
@@ -12,6 +13,19 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
+  String name = "No Name";
+  getSharedData() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var res = pref.getString('name');
+    if (res != null) name = res;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSharedData();
+  }
+
   double value = 0;
   @override
   Widget build(BuildContext context) {
@@ -42,14 +56,14 @@ class _MyDrawerState extends State<MyDrawer> {
                       children: [
                         CircleAvatar(
                           radius: 50.0,
-                          backgroundColor: Colors.amber,
-                          backgroundImage: AssetImage("asset/pic2.jpeg"),
+                          backgroundColor: Colors.white70,
+                          child: Icon(Icons.person, size: 50),
                         ),
                         SizedBox(
                           height: 10,
                         ),
                         Text(
-                          "Anas Loriya",
+                          name,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.0,

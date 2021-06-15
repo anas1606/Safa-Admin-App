@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ButtonNewUser extends StatefulWidget {
+  ButtonNewUser({
+    key,
+    @required this.flag,
+    @required this.callback,
+  }) : super(key: key);
+
+  final bool flag;
+  final Function callback;
   @override
   _ButtonNewUserState createState() => _ButtonNewUserState();
 }
@@ -27,7 +36,7 @@ class _ButtonNewUserState extends State<ButtonNewUser> {
         ], color: Colors.white, borderRadius: BorderRadius.circular(30)),
         child: FlatButton(
           onPressed: () {
-            Navigator.pop(context);
+            widget.callback();
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -40,10 +49,19 @@ class _ButtonNewUserState extends State<ButtonNewUser> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              Icon(
-                Icons.arrow_forward,
-                color: Colors.blueGrey[700],
-              ),
+              (widget.flag)
+                  ? Icon(
+                      Icons.arrow_forward,
+                      color: Colors.blueGrey[700],
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: SpinKitHourGlass(
+                        size: 20,
+                        duration: Duration(seconds: 10),
+                        color: Colors.blueGrey[900],
+                      ),
+                    ),
             ],
           ),
         ),

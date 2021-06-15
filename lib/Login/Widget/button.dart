@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ButtonLogin extends StatefulWidget {
@@ -26,8 +25,14 @@ class _ButtonLoginState extends State<ButtonLogin> {
   setToken(String token) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      print(token);
       pref.setString('session', token);
+    });
+  }
+
+  setName(String name) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      pref.setString('name', name);
     });
   }
 
@@ -53,6 +58,7 @@ class _ButtonLoginState extends State<ButtonLogin> {
       if (data["statusCode"] == 200) {
         data = data["data"];
         setToken(data["sessionToken"]);
+        setName(data["firstName"] + " " + data["lastName"]);
         Navigator.of(context).pushReplacementNamed("dasboard");
       } else
         Dialog(data["message"], data["statusCode"]);

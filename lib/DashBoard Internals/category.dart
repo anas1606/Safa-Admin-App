@@ -37,6 +37,10 @@ class _CategoryState extends State<Category> {
       pref.remove('session');
       Navigator.of(context)
           .pushNamedAndRemoveUntil("loginpage", (route) => false);
+    } else if (data["statusCode"] == null) {
+      PopUpDialog(data["message"], data["status"], "Error");
+    } else if (data["statusCode"] != 200) {
+      PopUpDialog(data["message"], data["statusCode"], "Somthing Worng");
     }
   }
 
@@ -62,12 +66,12 @@ class _CategoryState extends State<Category> {
   addcategory(String str) async {
     try {
       var url = "$prefix/api/admin/category/add/$str";
-      await http.post(Uri.parse(url), headers: {
+      var res = await http.post(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       });
-
+      validateReq(jsonDecode(res.body));
       setState(() {
         getdata();
       });
@@ -78,12 +82,12 @@ class _CategoryState extends State<Category> {
 
   updateCategory(String id, String status) async {
     var url = "$prefix/api/admin/category/update/?id=$id&status=$status";
-    await http.put(Uri.parse(url), headers: {
+    var res = await http.put(Uri.parse(url), headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
-
+    validateReq(jsonDecode(res.body));
     setState(() {
       getdata();
     });
@@ -91,11 +95,12 @@ class _CategoryState extends State<Category> {
 
   deleteCategory(String id) async {
     var url = "$prefix/api/admin/category/delete/$id";
-    await http.delete(Uri.parse(url), headers: {
+    var res = await http.delete(Uri.parse(url), headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
+    validateReq(jsonDecode(res.body));
     setState(() {
       getdata();
     });
@@ -266,7 +271,7 @@ class _CategoryState extends State<Category> {
                                           Toast.show(
                                             "Category Deleted",
                                             context,
-                                            duration: Toast.LENGTH_SHORT,
+                                            duration: 1,
                                             gravity: Toast.BOTTOM,
                                             backgroundColor: Colors.green,
                                           );
@@ -287,7 +292,7 @@ class _CategoryState extends State<Category> {
                                           Toast.show(
                                             "Canceled",
                                             context,
-                                            duration: Toast.LENGTH_SHORT,
+                                            duration: 1,
                                             gravity: Toast.BOTTOM,
                                             backgroundColor: Colors.red,
                                           );
@@ -464,7 +469,7 @@ class _CategoryState extends State<Category> {
                                           Toast.show(
                                             "New Category Created",
                                             context,
-                                            duration: Toast.LENGTH_SHORT,
+                                            duration: 1,
                                             gravity: Toast.BOTTOM,
                                             backgroundColor: Colors.green,
                                           );
@@ -486,7 +491,7 @@ class _CategoryState extends State<Category> {
                                           Toast.show(
                                             "Canceled",
                                             context,
-                                            duration: Toast.LENGTH_SHORT,
+                                            duration: 1,
                                             gravity: Toast.BOTTOM,
                                             backgroundColor: Colors.red,
                                           );
@@ -523,6 +528,52 @@ class _CategoryState extends State<Category> {
       resizeToAvoidBottomInset: false,
       drawer: MyDrawer(),
     );
+  }
+
+  PopUpDialog(String msg, int code, String header) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            buttonPadding: EdgeInsets.all(15),
+            backgroundColor: Colors.blueGrey[900],
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  size: 30,
+                  color: Colors.yellow,
+                ),
+                Text(
+                  "  $header",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                )
+              ],
+            ),
+            content: Text(
+              "$msg \nErrorCode: $code",
+              style: TextStyle(
+                color: Colors.white70,
+              ),
+            ),
+            actions: <Widget>[
+              RaisedButton(
+                color: Colors.green,
+                child: Text("Ok", style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+              ),
+            ],
+            actionsPadding: EdgeInsets.only(right: 100),
+          );
+        });
   }
 }
 

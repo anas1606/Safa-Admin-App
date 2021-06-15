@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NewEmail extends StatefulWidget {
+  NewEmail({Key key, @required this.textController}) : super(key: key);
+
+  final TextEditingController textController;
   @override
   _NewEmailState createState() => _NewEmailState();
 }
@@ -14,6 +17,7 @@ class _NewEmailState extends State<NewEmail> {
         height: 60,
         width: MediaQuery.of(context).size.width,
         child: TextField(
+          controller: widget.textController,
           style: TextStyle(
             color: Colors.white,
           ),
