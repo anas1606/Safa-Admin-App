@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safa_admin/DashBoard%20Internals/VehicleNames.dart';
 import 'package:safa_admin/DashBoard%20Internals/category.dart';
 import 'package:safa_admin/Dashboard.dart';
 import 'package:safa_admin/Drawer.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         'dasboard': (context) => MyDrawer(),
         'category': (context) => Category(),
         'loginpage': (context) => LoginPage(),
+        'vahiclename': (context) => VehicaleNames(),
       },
     );
   }

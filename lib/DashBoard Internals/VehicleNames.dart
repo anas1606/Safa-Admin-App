@@ -11,17 +11,20 @@ import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class Category extends StatefulWidget {
-  Category({Key key}) : super(key: key);
+class VehicaleNames extends StatefulWidget {
+  VehicaleNames({Key key}) : super(key: key);
 
   @override
-  _CategoryState createState() => _CategoryState();
+  _VehicaleNamesState createState() => _VehicaleNamesState();
 }
 
-class _CategoryState extends State<Category> {
+class _VehicaleNamesState extends State<VehicaleNames> {
   final _textController = TextEditingController();
+  String dropDown;
   final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
   var data;
+  List<String> categoryList;
+  var category;
   var result;
 
   String token;
@@ -44,9 +47,29 @@ class _CategoryState extends State<Category> {
     }
   }
 
+  getCategoryList() async {
+    try {
+      var url = "$prefix/api/admin/category/list/name";
+      var res = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': "Bearer $token",
+      });
+
+      category = jsonDecode(res.body);
+      validateReq(category);
+
+      setState(() {
+        categoryList = new List<String>.from(category["data"]);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   getdata() async {
     try {
-      var url = "$prefix/api/admin/category/list";
+      var url = "$prefix/api/admin/vehiclename/get/$dropDown";
       var res = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -57,6 +80,7 @@ class _CategoryState extends State<Category> {
       setState(() {
         result = data["result"];
         data = data["data"];
+        print(data.toString());
       });
     } catch (e) {
       print(e);
@@ -108,6 +132,8 @@ class _CategoryState extends State<Category> {
 
   void startUp() async {
     await gettoken();
+    await getCategoryList();
+    dropDown = categoryList.contains("TRUCK") ? "TRUCK" : categoryList[0];
     getdata();
   }
 
@@ -128,7 +154,7 @@ class _CategoryState extends State<Category> {
         title: FittedBox(
           fit: BoxFit.scaleDown,
           child: GradientText(
-            "Category",
+            "Vehicle Names",
             gradient: LinearGradient(
               colors: [
                 Colors.blue[400],
@@ -153,38 +179,7 @@ class _CategoryState extends State<Category> {
         child: data != null && data.length > 0
             ? Column(
                 children: <Widget>[
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: GradientText(
-                          "INFORMATION",
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white54,
-                              Colors.white54,
-                            ],
-                          ),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                            fontFamily: "kalam",
-                            shadows: [
-                              Shadow(
-                                offset: Offset(2.0, 7.0),
-                                blurRadius: 4.0,
-                                color: Colors.black,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  dropDownMenu(),
                   SizedBox(
                     height: 10.0,
                   ),
@@ -205,8 +200,8 @@ class _CategoryState extends State<Category> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return ListInfoCard(
-                            id: data[index]["categoryId"],
-                            title: data[index]["categoryName"],
+                            id: data[index]["vehicleId"],
+                            title: data[index]["vehicleName"],
                             icone: Icons.category,
                             status: data[index]["status"],
                             callback: (String id, String status) {
@@ -314,27 +309,32 @@ class _CategoryState extends State<Category> {
                 ],
               )
             : (data != null && data.length == 0)
-                ? Container(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    color: Colors.transparent,
-                    child: Center(
-                      child: GradientText(
-                        "NO DATA",
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.white24,
-                            Colors.white24,
-                          ],
+                ? Column(
+                    children: [
+                      dropDownMenu(),
+                      Container(
+                        height: MediaQuery.of(context).size.height - 300,
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.transparent,
+                        child: Center(
+                          child: GradientText(
+                            "NO DATA",
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white24,
+                                Colors.white24,
+                              ],
+                            ),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2.0,
+                                fontFamily: "fugzOne"),
+                          ),
                         ),
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                            fontFamily: "fugzOne"),
                       ),
-                    ),
+                    ],
                   )
                 : Container(
                     height: MediaQuery.of(context).size.height,
@@ -573,6 +573,49 @@ class _CategoryState extends State<Category> {
             actionsPadding: EdgeInsets.only(right: 100),
           );
         });
+  }
+
+  dropDownMenu() {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 15.0),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: DropdownButton<String>(
+                iconSize: 40,
+                icon: Icon(Icons.arrow_drop_down_sharp),
+                iconEnabledColor: Colors.white70,
+                value: dropDown,
+                dropdownColor: Colors.blueGrey[900],
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 3.5,
+                ),
+                items: categoryList.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: new Text(value),
+                  );
+                }).toList(),
+                onChanged: (String newValue) {
+                  HapticFeedback.heavyImpact();
+                  setState(() {
+                    dropDown = newValue;
+                    getdata();
+                  });
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
