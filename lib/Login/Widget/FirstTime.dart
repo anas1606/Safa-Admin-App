@@ -27,8 +27,10 @@ class _FirstTimeState extends State<FirstTime> {
             FlatButton(
               padding: EdgeInsets.all(0),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => NewUser()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NewUser(showSignIn: true)));
               },
               child: Text(
                 'Sing Up',

@@ -35,7 +35,8 @@ class _CategoryState extends State<Category> {
     if (data["statusCode"] == 401) {
       SharedPreferences pref = await SharedPreferences.getInstance();
       pref.remove('session');
-      Navigator.of(context).pushReplacementNamed("loginpage");
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("loginpage", (route) => false);
     }
   }
 

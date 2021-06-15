@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
+import 'package:toast/toast.dart';
 
 class DetailPage extends StatefulWidget {
   DetailPage({Key key}) : super(key: key);
@@ -9,6 +11,7 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  final _textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,26 +184,48 @@ class _DetailPageState extends State<DetailPage> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                    text: "Price\n",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline6
-                                        .copyWith(
-                                            color: Colors.white54,
-                                            fontFamily: "fugzOne")),
+                                  text: "Price\n",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6
+                                      .copyWith(
+                                          color: Colors.white54,
+                                          fontFamily: "fugzOne"),
+                                ),
                                 TextSpan(
-                                    text: "Rs 5000",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline5
-                                        .copyWith(
-                                            color: Colors.amber[300],
-                                            fontFamily: "fugzOne")),
+                                  text: "Rs 5000",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5
+                                      .copyWith(
+                                          color: Colors.amber[300],
+                                          fontFamily: "fugzOne"),
+                                ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(width: 15),
+                        SizedBox(
+                          width: 15,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0, left: 2.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                HapticFeedback.heavyImpact();
+                                showDialog(
+                                    context: context,
+                                    builder: (contex) {
+                                      return priceDailog();
+                                    });
+                              },
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.white54,
+                                size: 25,
+                              ),
+                            ),
+                          ),
+                        ),
                         Expanded(
                           child: AspectRatio(
                             aspectRatio: 90 / 100,
@@ -245,6 +270,168 @@ class _DetailPageState extends State<DetailPage> {
           );
         else
           return Container(child: Image.asset(images[index]));
+      },
+    );
+  }
+
+  Widget priceDailog() {
+    return StatefulBuilder(
+      builder: (BuildContext context, setState) {
+        return FittedBox(
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: 300,
+                  width: 300,
+                  margin: EdgeInsets.only(top: 30, left: 10, right: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey[900],
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(40),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black,
+                        offset: Offset(4.0, 4.0),
+                        blurRadius: 20.0,
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8.0,
+                          left: 20.0,
+                        ),
+                        child: GradientText(
+                          "Update Price",
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.blue[400],
+                              Colors.purple[500],
+                            ],
+                          ),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0,
+                              fontFamily: "fugzOne"),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      GradientText(
+                        "-: Rate :-",
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white60,
+                            Colors.white60,
+                          ],
+                        ),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2.0,
+                          fontFamily: "kalam",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 50,
+                          left: 50,
+                        ),
+                        child: Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          child: TextFormField(
+                            controller: _textController,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0,
+                              fontFamily: "kalam",
+                            ),
+                            decoration: InputDecoration(
+                              // to put thext in center
+                              contentPadding:
+                                  EdgeInsets.symmetric(vertical: 0.0),
+                              border: OutlineInputBorder(),
+                              filled: true,
+                              hintStyle: TextStyle(
+                                color: Colors.white54,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 2.0,
+                                fontFamily: "kalam",
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: IconButton(
+                              icon: Icon(Icons.done),
+                              onPressed: () {
+                                HapticFeedback.heavyImpact();
+                                Toast.show(
+                                  "Price Updated",
+                                  context,
+                                  duration: Toast.LENGTH_SHORT,
+                                  gravity: Toast.BOTTOM,
+                                  backgroundColor: Colors.green,
+                                );
+                                Navigator.pop(context);
+                              },
+                              color: Colors.green,
+                              alignment: Alignment.center,
+                              iconSize: 40.0,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: IconButton(
+                              icon: Icon(Icons.cancel),
+                              onPressed: () {
+                                HapticFeedback.heavyImpact();
+                                Toast.show(
+                                  "Canceled",
+                                  context,
+                                  duration: Toast.LENGTH_SHORT,
+                                  gravity: Toast.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                );
+                                Navigator.pop(context);
+                              },
+                              color: Colors.red,
+                              alignment: Alignment.center,
+                              iconSize: 40.0,
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

@@ -5,6 +5,7 @@ import 'package:safa_admin/DashBoard%20Internals/category.dart';
 import 'package:safa_admin/Dashboard.dart';
 import 'package:safa_admin/Drawer.dart';
 import 'package:safa_admin/Login/LoginPage.dart';
+import 'package:safa_admin/Login/NewUser.dart';
 import 'package:safa_admin/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,9 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Safa Admin App",
-      home: MyDrawer(),
+      home: MyHomePage(),
       routes: {
-        'dasboard': (context) => Dashboard(),
+        'dasboard': (context) => MyDrawer(),
         'category': (context) => Category(),
         'loginpage': (context) => LoginPage(),
       },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:safa_admin/Login/Widget/NewLname.dart';
 import 'Widget/BUttonNewuser.dart';
 import 'Widget/NewEmail.dart';
 import 'Widget/NewName.dart';
@@ -8,6 +9,12 @@ import 'Widget/passwordInput.dart';
 import 'Widget/textNew.dart';
 
 class NewUser extends StatefulWidget {
+  NewUser({
+    key,
+    @required this.showSignIn,
+  }) : super(key: key);
+
+  final bool showSignIn;
   @override
   _NewUserState createState() => _NewUserState();
 }
@@ -35,10 +42,11 @@ class _NewUserState extends State<NewUser> {
                   ],
                 ),
                 NewNome(),
+                NewLNome(),
                 NewEmail(),
                 PasswordInput(textController: _textController),
                 ButtonNewUser(),
-                UserOld(),
+                if (widget.showSignIn) UserOld(),
               ],
             ),
           ],

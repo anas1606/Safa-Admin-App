@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:math';
-
 import 'package:safa_admin/Dashboard.dart';
+import 'package:safa_admin/Login/NewUser.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key key}) : super(key: key);
@@ -88,7 +89,14 @@ class _MyDrawerState extends State<MyDrawer> {
                           ),
                         ),
                         ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            HapticFeedback.heavyImpact();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        NewUser(showSignIn: false)));
+                          },
                           leading: Icon(
                             Icons.person_add_alt_1,
                             color: Colors.white,
