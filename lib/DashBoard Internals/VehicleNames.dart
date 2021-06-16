@@ -33,6 +33,18 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     token = session;
   }
 
+  Color statuscolor = Colors.red;
+  setStatus() {
+    setState(() {
+      if (data != null) {
+        if (data["status"] != "ACTIVE")
+          statuscolor = Colors.red;
+        else
+          statuscolor = Colors.green;
+      }
+    });
+  }
+
   validateReq(var data) async {
     if (data["statusCode"] == 401) {
       SharedPreferences pref = await SharedPreferences.getInstance();
@@ -149,6 +161,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     await getCategoryList();
     dropDown = categoryList.contains("TRUCK") ? "TRUCK" : categoryList[0];
     getdata();
+    setStatus();
   }
 
   @override
@@ -637,6 +650,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                   HapticFeedback.heavyImpact();
                   setState(() {
                     dropDown = newValue;
+                    data = null;
                     getdata();
                   });
                 },
