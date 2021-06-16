@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
-import 'package:safa_admin/Drawer.dart';
 import 'package:safa_admin/chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:safa_admin/listinfoCard.dart';
@@ -80,21 +79,27 @@ class _VehicaleNamesState extends State<VehicaleNames> {
       setState(() {
         result = data["result"];
         data = data["data"];
-        print(data.toString());
       });
     } catch (e) {
       print(e);
     }
   }
 
-  addcategory(String str) async {
+  addVehicleName(String str) async {
     try {
-      var url = "$prefix/api/admin/category/add/$str";
-      var res = await http.post(Uri.parse(url), headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      });
+      var url = "$prefix/api/admin/vehiclename/add";
+      var res = await http.post(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode(
+            <String, String>{
+              'name': str,
+              'category': dropDown,
+            },
+          ));
       validateReq(jsonDecode(res.body));
       setState(() {
         getdata();
@@ -104,21 +109,30 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     }
   }
 
-  updateCategory(String id, String status) async {
-    var url = "$prefix/api/admin/category/update/?id=$id&status=$status";
-    var res = await http.put(Uri.parse(url), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    });
+  updatevehicle(String id, String status) async {
+    var url = "$prefix/api/admin/vehiclename/update";
+    var res = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(
+        <String, String>{
+          'vehicleId': id,
+          'status': status,
+        },
+      ),
+    );
     validateReq(jsonDecode(res.body));
     setState(() {
       getdata();
     });
   }
 
-  deleteCategory(String id) async {
-    var url = "$prefix/api/admin/category/delete/$id";
+  deleteVehicleName(String id) async {
+    var url = "$prefix/api/admin/vehiclename/delete/$id";
     var res = await http.delete(Uri.parse(url), headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -205,7 +219,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                             icone: Icons.category,
                             status: data[index]["status"],
                             callback: (String id, String status) {
-                              updateCategory(id, status);
+                              updatevehicle(id, status);
                             },
                             ondeletepress: () {
                               HapticFeedback.heavyImpact();
@@ -261,8 +275,8 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                                                 TextStyle(color: Colors.white)),
                                         onPressed: () {
                                           //data.removeAt(index);
-                                          deleteCategory(
-                                              data[index]["categoryId"]);
+                                          deleteVehicleName(
+                                              data[index]["vehicleId"]);
                                           Toast.show(
                                             "Category Deleted",
                                             context,
@@ -473,7 +487,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                                             gravity: Toast.BOTTOM,
                                             backgroundColor: Colors.green,
                                           );
-                                          addcategory(_textController.text);
+                                          addVehicleName(_textController.text);
                                           _textController.text = "";
                                           Navigator.pop(context);
                                         },
@@ -579,10 +593,26 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     return FittedBox(
       fit: BoxFit.scaleDown,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 15.0),
+            padding: const EdgeInsets.only(top: 2.0),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                "Categores ",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0),
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: DropdownButton<String>(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
-import 'package:safa_admin/Drawer.dart';
 import 'package:safa_admin/chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:safa_admin/listinfoCard.dart';
@@ -156,7 +155,7 @@ class _CategoryState extends State<Category> {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 15.0),
+                      padding: const EdgeInsets.only(top: 2.0),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
                         child: GradientText(
