@@ -10,20 +10,23 @@ import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class VehicaleNames extends StatefulWidget {
-  VehicaleNames({Key key}) : super(key: key);
+class Model extends StatefulWidget {
+  Model({Key key}) : super(key: key);
 
   @override
-  _VehicaleNamesState createState() => _VehicaleNamesState();
+  _ModelState createState() => _ModelState();
 }
 
-class _VehicaleNamesState extends State<VehicaleNames> {
+class _ModelState extends State<Model> {
   final _textController = TextEditingController();
   String dropDown;
+  String dropDown2;
   final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
   var data;
   List<String> categoryList;
+  List<String> vehicleList;
   var category;
+  var vehicle;
   var result;
 
   String token;
@@ -66,9 +69,37 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     }
   }
 
+  getVehicleNameList() async {
+    try {
+      var url = "$prefix/api/admin/vehiclename/get/names/$dropDown";
+      var res = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': "Bearer $token",
+      });
+
+      vehicle = jsonDecode(res.body);
+      validateReq(vehicle);
+      setState(() {
+        if (vehicle["data"].isNotEmpty)
+          vehicleList = new List<String>.from(vehicle["data"]);
+        else
+          vehicleList.add("NO DATA");
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  refreshData() async {
+    await getVehicleNameList();
+    dropDown2 = vehicleList[0];
+    await getdata();
+  }
+
   getdata() async {
     try {
-      var url = "$prefix/api/admin/vehiclename/get/$dropDown";
+      var url = "$prefix/api/admin/model/get/list/$dropDown2";
       var res = await http.get(Uri.parse(url), headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -85,9 +116,9 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     }
   }
 
-  addVehicleName(String str) async {
+  addModel(String str) async {
     try {
-      var url = "$prefix/api/admin/vehiclename/add";
+      var url = "$prefix/api/admin/model/add";
       var res = await http.post(Uri.parse(url),
           headers: {
             'Content-Type': 'application/json',
@@ -96,8 +127,8 @@ class _VehicaleNamesState extends State<VehicaleNames> {
           },
           body: jsonEncode(
             <String, String>{
-              'name': str,
-              'category': dropDown,
+              'vehicleName': dropDown2,
+              'modelName': str,
             },
           ));
       validateReq(jsonDecode(res.body));
@@ -109,8 +140,8 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     }
   }
 
-  updatevehicle(String id, String status) async {
-    var url = "$prefix/api/admin/vehiclename/update";
+  updateModel(String id, String status) async {
+    var url = "$prefix/api/admin/model/update";
     var res = await http.put(
       Uri.parse(url),
       headers: {
@@ -120,7 +151,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
       },
       body: jsonEncode(
         <String, String>{
-          'vehicleId': id,
+          'modelId': id,
           'status': status,
         },
       ),
@@ -131,8 +162,8 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     });
   }
 
-  deleteVehicleName(String id) async {
-    var url = "$prefix/api/admin/vehiclename/delete/$id";
+  deleteModel(String id) async {
+    var url = "$prefix/api/admin/model/delete/$id";
     var res = await http.delete(Uri.parse(url), headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -148,7 +179,9 @@ class _VehicaleNamesState extends State<VehicaleNames> {
     await gettoken();
     await getCategoryList();
     dropDown = categoryList.contains("TRUCK") ? "TRUCK" : categoryList[0];
-    getdata();
+    await getVehicleNameList();
+    dropDown2 = vehicleList.contains("EICHER") ? "EICHER" : vehicleList[0];
+    await getdata();
   }
 
   @override
@@ -168,7 +201,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
         title: FittedBox(
           fit: BoxFit.scaleDown,
           child: GradientText(
-            "Vehicle Names",
+            "Models",
             gradient: LinearGradient(
               colors: [
                 Colors.blue[400],
@@ -214,12 +247,12 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return ListInfoCard(
-                            id: data[index]["vehicleId"],
-                            title: data[index]["vehicleName"],
+                            id: data[index]["modelId"],
+                            title: data[index]["modelName"],
                             icone: Icons.category,
                             status: data[index]["status"],
                             callback: (String id, String status) {
-                              updatevehicle(id, status);
+                              updateModel(id, status);
                             },
                             ondeletepress: () {
                               HapticFeedback.heavyImpact();
@@ -275,10 +308,9 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                                                 TextStyle(color: Colors.white)),
                                         onPressed: () {
                                           //data.removeAt(index);
-                                          deleteVehicleName(
-                                              data[index]["vehicleId"]);
+                                          deleteModel(data[index]["modelId"]);
                                           Toast.show(
-                                            "VehicleName Deleted",
+                                            "Model Deleted",
                                             context,
                                             duration: 1,
                                             gravity: Toast.BOTTOM,
@@ -487,7 +519,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                                             gravity: Toast.BOTTOM,
                                             backgroundColor: Colors.green,
                                           );
-                                          addVehicleName(_textController.text);
+                                          addModel(_textController.text);
                                           _textController.text = "";
                                           Navigator.pop(context);
                                         },
@@ -600,7 +632,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                "Categores ",
+                "Cat ",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -609,7 +641,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
             ),
           ),
           SizedBox(
-            width: 10.0,
+            width: 5.0,
           ),
           Padding(
             padding: const EdgeInsets.only(top: 2.0),
@@ -623,7 +655,7 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                 dropdownColor: Colors.blueGrey[900],
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 3.5,
                 ),
@@ -637,6 +669,60 @@ class _VehicaleNamesState extends State<VehicaleNames> {
                   HapticFeedback.heavyImpact();
                   setState(() {
                     dropDown = newValue;
+                    vehicleList = [];
+                    dropDown2 = "NO DATA";
+                    data = null;
+                    refreshData();
+                  });
+                },
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 30.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                "Names ",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 5.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: DropdownButton<String>(
+                iconSize: 40,
+                icon: Icon(Icons.arrow_drop_down_sharp),
+                iconEnabledColor: Colors.white70,
+                value: dropDown2,
+                dropdownColor: Colors.blueGrey[900],
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 3.5,
+                ),
+                items: vehicleList.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: new Text(value),
+                  );
+                }).toList(),
+                onChanged: (String newValue) {
+                  HapticFeedback.heavyImpact();
+                  setState(() {
+                    dropDown2 = newValue;
                     data = null;
                     getdata();
                   });

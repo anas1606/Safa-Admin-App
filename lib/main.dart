@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safa_admin/DashBoard%20Internals/VehicleNames.dart';
 import 'package:safa_admin/DashBoard%20Internals/category.dart';
-import 'package:safa_admin/Dashboard.dart';
 import 'package:safa_admin/Drawer.dart';
 import 'package:safa_admin/Login/LoginPage.dart';
-import 'package:safa_admin/Login/NewUser.dart';
 import 'package:safa_admin/splashScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'DashBoard Internals/model.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         'category': (context) => Category(),
         'loginpage': (context) => LoginPage(),
         'vahiclename': (context) => VehicaleNames(),
+        'model': (context) => Model(),
       },
     );
   }

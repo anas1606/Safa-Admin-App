@@ -182,6 +182,13 @@ class _DashBoardDesignState extends State<DashBoardDesign> {
             contex: context,
             route: "vahiclename",
           ),
+          _buildSingleContainer(
+            icon: Icons.model_training,
+            text: "Models",
+            count: data["models"],
+            contex: context,
+            route: "model",
+          ),
         ],
       );
     } else {
