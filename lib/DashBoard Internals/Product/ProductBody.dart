@@ -5,11 +5,22 @@ import 'package:safa_admin/DashBoard%20Internals/Product/detailPage.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/iteamCard.dart';
 
 class ProductBody extends StatefulWidget {
-  ProductBody({key, @required this.names, @required this.model})
-      : super(key: key);
+  ProductBody({
+    key,
+    @required this.names,
+    @required this.model,
+    @required this.data,
+    @required this.vehicleChange,
+    @required this.vehname,
+    @required this.modelname,
+  }) : super(key: key);
 
   final List<String> names;
   final List<String> model;
+  final Function(String) vehicleChange;
+  var data;
+  final String vehname;
+  final String modelname;
   @override
   _ProductBodyState createState() => _ProductBodyState(names, model);
 }
@@ -19,16 +30,18 @@ class _ProductBodyState extends State<ProductBody> {
     this.names = names;
     this.model = model;
   }
-  @override
-  void initState() {
-    super.initState();
-    dropDown = model[0];
-  }
 
   List<String> names;
   List<String> model;
   int selectedindex = 0;
   String dropDown;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedindex = names.indexOf(widget.vehname);
+    dropDown = model[0];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +121,7 @@ class _ProductBodyState extends State<ProductBody> {
         HapticFeedback.heavyImpact();
         setState(() {
           selectedindex = index;
+          widget.vehicleChange(names[index]);
         });
       },
       child: Padding(
