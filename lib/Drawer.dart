@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'dart:math';
 import 'package:safa_admin/Dashboard.dart';
 import 'package:safa_admin/Login/NewUser.dart';
@@ -24,6 +26,68 @@ class _MyDrawerState extends State<MyDrawer> {
   void initState() {
     super.initState();
     getSharedData();
+  }
+
+  File _image;
+  _imgFromCamera() async {
+    File image = await ImagePicker.pickImage(
+      source: ImageSource.camera,
+    );
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  _imgFromGallery() async {
+    File image = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    setState(() {
+      _image = image;
+    });
+  }
+
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                    leading: new Icon(Icons.photo_library),
+                    title: new Text('Photo Library'),
+                    onTap: () {
+                      _imgFromGallery();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imgFromCamera();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.image_not_supported_outlined),
+                    title: new Text('Remove Image'),
+                    onTap: () {
+                      setState(() {
+                        _image = null;
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   double value = 0;
@@ -54,10 +118,34 @@ class _MyDrawerState extends State<MyDrawer> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 50.0,
-                          backgroundColor: Colors.white70,
-                          child: Icon(Icons.person, size: 50),
+                        GestureDetector(
+                          onTap: () => _showPicker(context),
+                          child: CircleAvatar(
+                            radius: 50.0,
+                            backgroundColor: Colors.white70,
+                            child: _image != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.file(
+                                      _image,
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                  )
+                                : Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white60,
+                                        borderRadius:
+                                            BorderRadius.circular(50),),
+                                    width: 100,
+                                    height: 100,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.grey[800],
+                                    ),
+                                  ),
+                          ),
                         ),
                         SizedBox(
                           height: 10,

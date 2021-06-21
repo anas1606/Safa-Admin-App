@@ -7,7 +7,6 @@ import 'package:safa_admin/DashBoard%20Internals/Product/ProductBody.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:toast/toast.dart';
 
 class Product extends StatefulWidget {
   Product({Key key}) : super(key: key);
@@ -17,7 +16,6 @@ class Product extends StatefulWidget {
 }
 
 class _ProductState extends State<Product> {
-  final _textController = TextEditingController();
   String cat;
   String veh;
   String mod;

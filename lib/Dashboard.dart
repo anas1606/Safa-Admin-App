@@ -126,9 +126,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
               controller: _tabController,
               children: <Widget>[
                 Container(child: DashBoardDesign()),
-                Container(
-                  child: Product(),
-                ),
+                Container(child: Product()),
               ],
             ),
           ),

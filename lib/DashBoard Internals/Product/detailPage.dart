@@ -61,9 +61,9 @@ class _DetailPageState extends State<DetailPage> {
                 //height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: [Colors.white30, Colors.transparent],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.white12, Colors.transparent],
                   ),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(50),
@@ -89,7 +89,7 @@ class _DetailPageState extends State<DetailPage> {
                               Text(
                                 "EICHER",
                                 style: TextStyle(
-                                  color: Colors.amberAccent,
+                                  color: Colors.cyan[400],
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -111,7 +111,7 @@ class _DetailPageState extends State<DetailPage> {
                               Text(
                                 "Pro 3110",
                                 style: TextStyle(
-                                  color: Colors.amberAccent,
+                                  color: Colors.cyan[400],
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -124,16 +124,16 @@ class _DetailPageState extends State<DetailPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Weight",
+                                "Type",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                 ),
                               ),
                               Text(
-                                "0.350 Kg",
+                                "DLX",
                                 style: TextStyle(
-                                  color: Colors.amberAccent,
+                                  color: Colors.cyan[400],
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -228,10 +228,13 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                         Expanded(
                           child: AspectRatio(
-                            aspectRatio: 90 / 100,
+                            aspectRatio: 95 / 100,
                             child: SizedBox(
                                 height: 200,
-                                child: Image.asset("asset/fender2.png")),
+                                child: Image.asset(
+                                  "asset/fender2.png",
+                                  fit: BoxFit.scaleDown,
+                                )),
                           ),
                         )
                       ],
@@ -277,6 +280,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget priceDailog() {
     return StatefulBuilder(
       builder: (BuildContext context, setState) {
+        _textController.text = "5000";
         return FittedBox(
           child: Dialog(
             backgroundColor: Colors.transparent,
