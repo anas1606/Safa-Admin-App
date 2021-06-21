@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:safa_admin/DashBoard%20Internals/Product/New%20Product/newProduct.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/ProductBody.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -283,6 +284,11 @@ class _ProductState extends State<Product> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           HapticFeedback.heavyImpact();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => addnewProduct()),
+          );
+          addnewProduct();
         },
         child: const Icon(
           Icons.add,

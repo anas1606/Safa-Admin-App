@@ -119,7 +119,10 @@ class _MyDrawerState extends State<MyDrawer> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () => _showPicker(context),
+                          onTap: () {
+                            HapticFeedback.heavyImpact();
+                            _showPicker(context);
+                          },
                           child: CircleAvatar(
                             radius: 50.0,
                             backgroundColor: Colors.white70,
@@ -135,9 +138,9 @@ class _MyDrawerState extends State<MyDrawer> {
                                   )
                                 : Container(
                                     decoration: BoxDecoration(
-                                        color: Colors.white60,
-                                        borderRadius:
-                                            BorderRadius.circular(50),),
+                                      color: Colors.white60,
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
                                     width: 100,
                                     height: 100,
                                     child: Icon(

@@ -156,7 +156,7 @@ class _ProductBodyState extends State<ProductBody> {
     return SizedBox(
       height: 35,
       child: DropdownButton<String>(
-        iconSize: 40,
+        iconSize: 20,
         icon: Icon(Icons.arrow_drop_down_sharp),
         iconEnabledColor: Colors.white70,
         value: dropDown,

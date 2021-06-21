@@ -648,7 +648,7 @@ class _ModelState extends State<Model> {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: DropdownButton<String>(
-                iconSize: 40,
+                iconSize: 20,
                 icon: Icon(Icons.arrow_drop_down_sharp),
                 iconEnabledColor: Colors.white70,
                 value: dropDown,
@@ -702,7 +702,7 @@ class _ModelState extends State<Model> {
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: DropdownButton<String>(
-                iconSize: 40,
+                iconSize: 20,
                 icon: Icon(Icons.arrow_drop_down_sharp),
                 iconEnabledColor: Colors.white70,
                 value: dropDown2,
