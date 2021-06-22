@@ -30,22 +30,22 @@ class _MyDrawerState extends State<MyDrawer> {
 
   File _image;
   _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(
+    var image = await ImagePicker().getImage(
       source: ImageSource.camera,
     );
 
     setState(() {
-      _image = image;
+      _image = File(image.path);
     });
   }
 
   _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(
+    var image = await ImagePicker().getImage(
       source: ImageSource.gallery,
     );
 
     setState(() {
-      _image = image;
+      _image = File(image.path);
     });
   }
 

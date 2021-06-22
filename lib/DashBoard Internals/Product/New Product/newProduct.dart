@@ -18,22 +18,22 @@ class _addnewProductState extends State<addnewProduct> {
   File _coverImage;
 
   _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(
+    var image = await ImagePicker().getImage(
       source: ImageSource.camera,
     );
 
     setState(() {
-      _coverImage = image;
+      _coverImage = File(image.path);
     });
   }
 
   _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(
+    var image = await ImagePicker().getImage(
       source: ImageSource.gallery,
     );
 
     setState(() {
-      _coverImage = image;
+      _coverImage = File(image.path);
     });
   }
 
@@ -358,5 +358,5 @@ class _addnewProductState extends State<addnewProduct> {
 }
 
 List<String> getList() {
-  return ["LD", "HD", "DLX" ,"NONE"];
+  return ["LD", "HD", "DLX", "NONE"];
 }
