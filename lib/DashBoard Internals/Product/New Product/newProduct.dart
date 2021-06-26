@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class addnewProduct extends StatefulWidget {
   addnewProduct({Key key}) : super(key: key);
@@ -19,7 +20,6 @@ class addnewProduct extends StatefulWidget {
 }
 
 class _addnewProductState extends State<addnewProduct> {
-
   final _NametextController = TextEditingController();
   final _PricetextController = TextEditingController();
 
@@ -31,6 +31,9 @@ class _addnewProductState extends State<addnewProduct> {
   String vname;
   String mod;
   String type = getList()[0];
+  var data;
+  bool progress = false;
+
   final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
   String token;
   gettoken() async {
@@ -46,10 +49,70 @@ class _addnewProductState extends State<addnewProduct> {
       Navigator.of(context)
           .pushNamedAndRemoveUntil("loginpage", (route) => false);
     } else if (data["statusCode"] == null) {
+      setState(() {
+        progress = false;
+      });
       PopUpDialog(data["message"], data["status"], "Error");
     } else if (data["statusCode"] != 200) {
+      setState(() {
+        progress = false;
+      });
       PopUpDialog(data["message"], data["statusCode"], "Somthing Worng");
     }
+  }
+
+  addproduct() async {
+    setState(() {
+      progress = true;
+    });
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': "Bearer $token",
+    };
+
+    var url = "$prefix/api/admin/product/";
+    var req = await http.MultipartRequest('POST', Uri.parse(url));
+    req.headers.addAll(header);
+    req.fields['data'] = jsonEncode(<String, String>{
+      "name": _NametextController.text,
+      "rate": _PricetextController.text,
+      "type": dropDown,
+      "category": cat,
+      "vehicleName": vname,
+      "model": mod
+    });
+    if (images.length >= 1)
+      req.files
+          .add(await http.MultipartFile.fromPath('image1', images[0].path));
+    if (images.length >= 2)
+      req.files
+          .add(await http.MultipartFile.fromPath('image2', images[1].path));
+    if (images.length >= 3)
+      req.files
+          .add(await http.MultipartFile.fromPath('image2', images[2].path));
+    if (images.length == 4)
+      req.files
+          .add(await http.MultipartFile.fromPath('image3', images[3].path));
+    if (_coverImage != null)
+      req.files.add(
+          await http.MultipartFile.fromPath('coverimage', _coverImage.path));
+
+    var res = await http.Response.fromStream(await req.send());
+    data = jsonDecode(res.body);
+    validateReq(data);
+    setState(() {
+      if (data["statusCode"] == 200) {
+        progress = false;
+        Toast.show(
+          "Product Added",
+          context,
+          duration: 1,
+          gravity: Toast.BOTTOM,
+          backgroundColor: Colors.green,
+        );
+      }
+    });
   }
 
   List<String> categoryList;
@@ -160,6 +223,7 @@ class _addnewProductState extends State<addnewProduct> {
   _imgFromCamera(bool flag) async {
     var image = await ImagePicker().getImage(
       source: ImageSource.camera,
+      imageQuality: 50,
     );
 
     setState(() {
@@ -174,6 +238,7 @@ class _addnewProductState extends State<addnewProduct> {
   _imgFromGallery(bool flag) async {
     var image = await ImagePicker().getImage(
       source: ImageSource.gallery,
+      imageQuality: 25,
     );
 
     setState(() {
@@ -454,14 +519,34 @@ class _addnewProductState extends State<addnewProduct> {
                             _showPicker(context, false);
                           },
                           child: (_coverImage != null)
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(0),
-                                  child: Image.file(
-                                    _coverImage,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.fitHeight,
-                                  ),
+                              ? Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(0),
+                                      child: Image.file(
+                                        _coverImage,
+                                        width: 180,
+                                        height: 250,
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      right: 1,
+                                      top: 1,
+                                      child: InkWell(
+                                        child: Icon(
+                                          Icons.cancel,
+                                          size: 25,
+                                          color: Colors.red,
+                                        ),
+                                        onTap: () {
+                                          HapticFeedback.heavyImpact();
+                                          _coverImage = null;
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 )
                               : Icon(
                                   Icons.add_a_photo_outlined,
@@ -550,6 +635,8 @@ class _addnewProductState extends State<addnewProduct> {
                 child: ElevatedButton(
                   onPressed: () {
                     HapticFeedback.heavyImpact();
+                    addproduct();
+                    setState(() {});
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -563,6 +650,14 @@ class _addnewProductState extends State<addnewProduct> {
                         "SAVE",
                         style: TextStyle(fontSize: 24),
                       ),
+                      if (progress)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: SpinKitHourGlass(
+                            color: Colors.green,
+                            size: 30,
+                          ),
+                        )
                     ],
                   ),
                   style: ButtonStyle(
@@ -662,18 +757,38 @@ class _addnewProductState extends State<addnewProduct> {
               ),
             ),
           );
-        if (index < im.length)
-          return Container(
-            child: Image.file(
-              im[index],
-              width: 100,
-              height: 100,
-              fit: BoxFit.fitHeight,
+        else
+          return Card(
+            elevation: 20.0,
+            clipBehavior: Clip.antiAlias,
+            color: Colors.blueGrey[900],
+            child: Stack(
+              children: [
+                Image.file(
+                  im[index],
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.fitHeight,
+                ),
+                Positioned(
+                  top: 2,
+                  right: 2,
+                  child: InkWell(
+                    child: Icon(
+                      Icons.cancel,
+                      size: 25,
+                      color: Colors.red,
+                    ),
+                    onTap: () {
+                      HapticFeedback.heavyImpact();
+                      images.remove(images[index]);
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ],
             ),
           );
-        else {
-          return null;
-        }
       },
     );
   }

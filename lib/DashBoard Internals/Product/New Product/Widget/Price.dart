@@ -18,6 +18,7 @@ class _PriceState extends State<Price> {
         height: 60,
         width: MediaQuery.of(context).size.width - 100,
         child: TextField(
+          keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
           cursorColor: Colors.white,
           controller: widget.textController,
