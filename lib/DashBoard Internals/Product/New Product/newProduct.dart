@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/New%20Product/Widget/Name.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/New%20Product/Widget/Price.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class addnewProduct extends StatefulWidget {
   addnewProduct({Key key}) : super(key: key);
@@ -14,30 +19,173 @@ class addnewProduct extends StatefulWidget {
 }
 
 class _addnewProductState extends State<addnewProduct> {
-  String dropDown = getList()[0];
-  File _coverImage;
 
-  _imgFromCamera() async {
+  final _NametextController = TextEditingController();
+  final _PricetextController = TextEditingController();
+
+  String dropDown = getList()[0];
+  List<File> images = <File>[];
+  File _img;
+  File _coverImage;
+  String cat;
+  String vname;
+  String mod;
+  String type = getList()[0];
+  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  String token;
+  gettoken() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var session = pref.getString('session');
+    token = session;
+  }
+
+  validateReq(var data) async {
+    if (data["statusCode"] == 401) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.remove('session');
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("loginpage", (route) => false);
+    } else if (data["statusCode"] == null) {
+      PopUpDialog(data["message"], data["status"], "Error");
+    } else if (data["statusCode"] != 200) {
+      PopUpDialog(data["message"], data["statusCode"], "Somthing Worng");
+    }
+  }
+
+  List<String> categoryList;
+  var category;
+  getCategoryList() async {
+    try {
+      var url = "$prefix/api/admin/category/list/name";
+      var res = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': "Bearer $token",
+      });
+
+      category = jsonDecode(res.body);
+      validateReq(category);
+
+      setState(() {
+        categoryList = new List<String>.from(category["data"]);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  var vehicle;
+  List<String> vehicleList;
+  getVehicleNameList() async {
+    try {
+      var url = "$prefix/api/admin/vehiclename/get/names/$cat";
+      var res = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': "Bearer $token",
+      });
+      vehicle = jsonDecode(res.body);
+      validateReq(vehicle);
+      vehicleList = [];
+      setState(() {
+        if (vehicle["data"].isNotEmpty)
+          vehicleList = new List<String>.from(vehicle["data"]);
+        else
+          vehicleList.add("NO DATA");
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  var model;
+  List<String> modelList;
+  getModelList() async {
+    try {
+      var url = "$prefix/api/admin/model/get/names/$vname";
+      var res = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': "Bearer $token",
+      });
+      model = jsonDecode(res.body);
+      validateReq(model);
+      modelList = [];
+      setState(() {
+        if (model["data"].isNotEmpty)
+          modelList = new List<String>.from(model["data"]);
+        else
+          modelList.add("NO DATA");
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  refreshData() async {
+    await getVehicleNameList();
+    vname = vehicleList[0];
+    await getModelList();
+    mod = modelList[0];
+    await getdata();
+  }
+
+  refreshModelData() async {
+    await getModelList();
+    mod = modelList[0];
+    //await getdata();
+  }
+
+  getdata() async {
+    setState(() {});
+  }
+
+  startup() async {
+    await gettoken();
+    await getCategoryList();
+    cat = categoryList.contains("TRUCK") ? "TRUCK" : categoryList[0];
+    await getVehicleNameList();
+    vname = vehicleList.contains("EICHER") ? "EICHER" : vehicleList[0];
+    await getModelList();
+    mod = modelList[0];
+    type = dropDown;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startup();
+  }
+
+  _imgFromCamera(bool flag) async {
     var image = await ImagePicker().getImage(
       source: ImageSource.camera,
     );
 
     setState(() {
-      _coverImage = File(image.path);
+      _img = File(image.path);
+      if (flag)
+        images.add(_img);
+      else
+        _coverImage = _img;
     });
   }
 
-  _imgFromGallery() async {
+  _imgFromGallery(bool flag) async {
     var image = await ImagePicker().getImage(
       source: ImageSource.gallery,
     );
 
     setState(() {
-      _coverImage = File(image.path);
+      _img = File(image.path);
+      if (flag)
+        images.add(_img);
+      else
+        _coverImage = _img;
     });
   }
 
-  void _showPicker(context) {
+  void _showPicker(context, bool flag) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
@@ -49,7 +197,7 @@ class _addnewProductState extends State<addnewProduct> {
                     leading: new Icon(Icons.photo_library),
                     title: new Text('Photo Library'),
                     onTap: () {
-                      _imgFromGallery();
+                      _imgFromGallery(flag);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -57,17 +205,7 @@ class _addnewProductState extends State<addnewProduct> {
                     leading: new Icon(Icons.photo_camera),
                     title: new Text('Camera'),
                     onTap: () {
-                      _imgFromCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  new ListTile(
-                    leading: new Icon(Icons.image_not_supported_outlined),
-                    title: new Text('Remove Image'),
-                    onTap: () {
-                      setState(() {
-                        _coverImage = null;
-                      });
+                      _imgFromCamera(flag);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -80,8 +218,6 @@ class _addnewProductState extends State<addnewProduct> {
 
   @override
   Widget build(BuildContext context) {
-    final _nametextController = TextEditingController();
-    final _pricetextController = TextEditingController();
     return Scaffold(
       backgroundColor: Colors.blueGrey[900],
       appBar: AppBar(
@@ -135,37 +271,53 @@ class _addnewProductState extends State<addnewProduct> {
                                     color: Colors.white60,
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: DropdownButton<String>(
-                                      iconSize: 20,
-                                      icon: Icon(Icons.arrow_drop_down_sharp),
-                                      iconEnabledColor: Colors.white70,
-                                      value: dropDown,
-                                      dropdownColor: Colors.blueGrey[900],
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 3.5,
+                                (categoryList != null)
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 2.0),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: DropdownButton<String>(
+                                            iconSize: 20,
+                                            icon: Icon(
+                                                Icons.arrow_drop_down_sharp),
+                                            iconEnabledColor: Colors.white70,
+                                            value: cat,
+                                            dropdownColor: Colors.blueGrey[900],
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 3.5,
+                                            ),
+                                            items: categoryList
+                                                .map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: new Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String newValue) {
+                                              HapticFeedback.heavyImpact();
+                                              setState(() {
+                                                cat = newValue;
+                                                vname = "NO DATA";
+                                                mod = "NO DATA";
+                                                vehicleList = null;
+                                                modelList = null;
+                                                refreshData();
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: SpinKitPulse(
+                                          size: 40,
+                                          color: Colors.white54,
+                                        ),
                                       ),
-                                      items: getList().map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: new Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String newValue) {
-                                        HapticFeedback.heavyImpact();
-                                        setState(() {
-                                          dropDown = newValue;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                             SizedBox(
@@ -180,37 +332,51 @@ class _addnewProductState extends State<addnewProduct> {
                                     color: Colors.white60,
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: DropdownButton<String>(
-                                      iconSize: 20,
-                                      icon: Icon(Icons.arrow_drop_down_sharp),
-                                      iconEnabledColor: Colors.white70,
-                                      value: dropDown,
-                                      dropdownColor: Colors.blueGrey[900],
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 3.5,
+                                (vehicleList != null)
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 2.0),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: DropdownButton<String>(
+                                            iconSize: 20,
+                                            icon: Icon(
+                                                Icons.arrow_drop_down_sharp),
+                                            iconEnabledColor: Colors.white70,
+                                            value: vname,
+                                            dropdownColor: Colors.blueGrey[900],
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 3.5,
+                                            ),
+                                            items:
+                                                vehicleList.map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: new Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String newValue) {
+                                              HapticFeedback.heavyImpact();
+                                              setState(() {
+                                                vname = newValue;
+                                                mod = "NO DATA";
+                                                modelList = null;
+                                                refreshModelData();
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: SpinKitPulse(
+                                          size: 40,
+                                          color: Colors.white54,
+                                        ),
                                       ),
-                                      items: getList().map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: new Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String newValue) {
-                                        HapticFeedback.heavyImpact();
-                                        setState(() {
-                                          dropDown = newValue;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                             SizedBox(
@@ -225,37 +391,48 @@ class _addnewProductState extends State<addnewProduct> {
                                     color: Colors.white60,
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: DropdownButton<String>(
-                                      iconSize: 20,
-                                      icon: Icon(Icons.arrow_drop_down_sharp),
-                                      iconEnabledColor: Colors.white70,
-                                      value: dropDown,
-                                      dropdownColor: Colors.blueGrey[900],
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: 3.5,
+                                (modelList != null)
+                                    ? Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 2.0),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: DropdownButton<String>(
+                                            iconSize: 20,
+                                            icon: Icon(
+                                                Icons.arrow_drop_down_sharp),
+                                            iconEnabledColor: Colors.white70,
+                                            value: mod,
+                                            dropdownColor: Colors.blueGrey[900],
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 3.5,
+                                            ),
+                                            items:
+                                                modelList.map((String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: new Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged: (String newValue) {
+                                              HapticFeedback.heavyImpact();
+                                              setState(() {
+                                                mod = newValue;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(2.0),
+                                        child: SpinKitPulse(
+                                          size: 40,
+                                          color: Colors.white54,
+                                        ),
                                       ),
-                                      items: getList().map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: new Text(value),
-                                        );
-                                      }).toList(),
-                                      onChanged: (String newValue) {
-                                        HapticFeedback.heavyImpact();
-                                        setState(() {
-                                          dropDown = newValue;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ],
@@ -274,7 +451,7 @@ class _addnewProductState extends State<addnewProduct> {
                         child: GestureDetector(
                           onTap: () {
                             HapticFeedback.heavyImpact();
-                            _showPicker(context);
+                            _showPicker(context, false);
                           },
                           child: (_coverImage != null)
                               ? ClipRRect(
@@ -297,7 +474,7 @@ class _addnewProductState extends State<addnewProduct> {
                   ],
                 ),
               ),
-              Name(textController: _nametextController),
+              Name(textController: _NametextController),
               SizedBox(
                 height: 10.0,
               ),
@@ -305,7 +482,7 @@ class _addnewProductState extends State<addnewProduct> {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: Price(textController: _pricetextController),
+                    child: Price(textController: _PricetextController),
                   ),
                   Expanded(
                     child: Column(
@@ -348,11 +525,156 @@ class _addnewProductState extends State<addnewProduct> {
                     ),
                   )
                 ],
-              )
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 50.0),
+                  child: Container(
+                    height: 200,
+                    width: 370,
+                    padding: EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white38),
+                    ),
+                    child: Container(
+                      child: buildImagesGridView(images),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    HapticFeedback.heavyImpact();
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(Icons.done),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "SAVE",
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ],
+                  ),
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.blueGrey[900]),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                          side: BorderSide(color: Colors.green)),
+                    ),
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                        EdgeInsets.only(
+                            left: 20.0, right: 30.0, top: 10.0, bottom: 10.0)),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  PopUpDialog(String msg, int code, String header) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            buttonPadding: EdgeInsets.all(15),
+            backgroundColor: Colors.blueGrey[900],
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  size: 30,
+                  color: Colors.yellow,
+                ),
+                Text(
+                  "  $header",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                )
+              ],
+            ),
+            content: Text(
+              "$msg \nErrorCode: $code",
+              style: TextStyle(
+                color: Colors.white70,
+              ),
+            ),
+            actions: <Widget>[
+              RaisedButton(
+                color: Colors.green,
+                child: Text("Ok", style: TextStyle(color: Colors.white)),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+              ),
+            ],
+            actionsPadding: EdgeInsets.only(right: 100),
+          );
+        });
+  }
+
+  Widget buildImagesGridView(List<File> im) {
+    return GridView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: (images.length == 4) ? images.length : images.length + 1,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        childAspectRatio: 100 / 100,
+        mainAxisSpacing: 10,
+      ),
+      itemBuilder: (context, index) {
+        if (index == im.length)
+          return Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white30),
+              borderRadius: BorderRadius.circular(0),
+            ),
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.heavyImpact();
+                _showPicker(context, true);
+              },
+              child: Icon(
+                Icons.add_photo_alternate_outlined,
+                size: 50,
+                color: Colors.white30,
+              ),
+            ),
+          );
+        if (index < im.length)
+          return Container(
+            child: Image.file(
+              im[index],
+              width: 100,
+              height: 100,
+              fit: BoxFit.fitHeight,
+            ),
+          );
+        else {
+          return null;
+        }
+      },
     );
   }
 }
