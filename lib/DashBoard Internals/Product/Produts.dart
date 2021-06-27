@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/New%20Product/newProduct.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/ProductBody.dart';
-import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -67,12 +66,21 @@ class _ProductState extends State<Product> {
 
   getdata() async {
     try {
-      var url = "$prefix/api/admin/model/get/list/$veh";
-      var res = await http.get(Uri.parse(url), headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': "Bearer $token",
-      });
+      var url = "$prefix/api/admin/product/get";
+      var res = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+        body: jsonEncode(<String, String>{
+          "category": cat,
+          "vehicleName": veh,
+          "model": mod,
+        }),
+      );
+      print(cat + " " + veh + " " + mod);
       data = jsonDecode(res.body);
       validateReq(data);
       setState(() {
@@ -155,7 +163,9 @@ class _ProductState extends State<Product> {
     await getVehicleNameList();
     veh = vehicleList.contains("EICHER") ? "EICHER" : vehicleList[0];
     await getModelList();
-    mod = vehicleList[0];
+    mod = modelList[0];
+    await getdata();
+    print(data.toString() + "dasdas");
   }
 
   @override
@@ -337,17 +347,21 @@ class _ProductState extends State<Product> {
               ),
             ),
             actions: <Widget>[
-              RaisedButton(
-                color: Colors.green,
-                child: Text("Ok", style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RaisedButton(
+                    color: Colors.green,
+                    child: Text("Ok", style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                  ),
+                ],
               ),
             ],
-            actionsPadding: EdgeInsets.only(right: 100),
           );
         });
   }

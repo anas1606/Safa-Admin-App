@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/detailPage.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/iteamCard.dart';
+import 'package:safa_admin/Decoraters/GradiantText.dart';
 
 class ProductBody extends StatefulWidget {
   ProductBody({
@@ -91,24 +93,55 @@ class _ProductBodyState extends State<ProductBody> {
             ],
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: GridView.builder(
-                itemCount: names.length * 10,
-                padding: EdgeInsets.only(top: 10.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  mainAxisSpacing: 25,
-                  crossAxisSpacing: 15,
-                ),
-                itemBuilder: (context, index) => IteamCard(
-                    press: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (contex) => DetailPage()),
-                        )),
-              ),
-            ),
+            child: (widget.data != null)
+                ? Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: GridView.builder(
+                      itemCount: widget.data.length,
+                      padding: EdgeInsets.only(top: 10.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.75,
+                        mainAxisSpacing: 25,
+                        crossAxisSpacing: 15,
+                      ),
+                      itemBuilder: (context, index) => IteamCard(
+                          data: widget.data[index],
+                          press: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (contex) => DetailPage()),
+                              )),
+                    ),
+                  )
+                : (widget.data != null && widget.data.length == 0)
+                    ? Center(
+                        child: GradientText(
+                          "NO DATA",
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white24,
+                              Colors.white24,
+                            ],
+                          ),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2.0,
+                              fontFamily: "fugzOne"),
+                        ),
+                      )
+                    : Container(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.blueGrey[900],
+                        child: SpinKitFadingGrid(
+                          color: Colors.white60,
+                          size: 50.0,
+                          shape: BoxShape.rectangle,
+                        ),
+                      ),
           )
         ],
       ),

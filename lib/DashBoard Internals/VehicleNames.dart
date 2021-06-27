@@ -574,17 +574,21 @@ class _VehicaleNamesState extends State<VehicaleNames> {
               ),
             ),
             actions: <Widget>[
-              RaisedButton(
-                color: Colors.green,
-                child: Text("Ok", style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RaisedButton(
+                    color: Colors.green,
+                    child: Text("Ok", style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                  ),
+                ],
               ),
             ],
-            actionsPadding: EdgeInsets.only(right: 100),
           );
         });
   }

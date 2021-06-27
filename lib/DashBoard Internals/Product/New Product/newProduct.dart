@@ -49,15 +49,15 @@ class _addnewProductState extends State<addnewProduct> {
       Navigator.of(context)
           .pushNamedAndRemoveUntil("loginpage", (route) => false);
     } else if (data["statusCode"] == null) {
-      setState(() {
-        progress = false;
-      });
       PopUpDialog(data["message"], data["status"], "Error");
-    } else if (data["statusCode"] != 200) {
       setState(() {
         progress = false;
       });
+    } else if (data["statusCode"] != 200) {
       PopUpDialog(data["message"], data["statusCode"], "Somthing Worng");
+      setState(() {
+        progress = false;
+      });
     }
   }
 
@@ -71,7 +71,7 @@ class _addnewProductState extends State<addnewProduct> {
       'Authorization': "Bearer $token",
     };
 
-    var url = "$prefix/api/admin/product/";
+    var url = "$prefix/api/admin/product/add";
     var req = await http.MultipartRequest('POST', Uri.parse(url));
     req.headers.addAll(header);
     req.fields['data'] = jsonEncode(<String, String>{
@@ -507,12 +507,9 @@ class _addnewProductState extends State<addnewProduct> {
                     SizedBox(
                       height: 250,
                       width: 180,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.white12,
-                          ),
-                        ),
+                      child: Card(
+                        color: Colors.blueGrey[900],
+                        elevation: 20,
                         child: GestureDetector(
                           onTap: () {
                             HapticFeedback.heavyImpact();
@@ -549,9 +546,9 @@ class _addnewProductState extends State<addnewProduct> {
                                   ],
                                 )
                               : Icon(
-                                  Icons.add_a_photo_outlined,
+                                  Icons.add_photo_alternate_outlined,
                                   color: Colors.white24,
-                                  size: 150,
+                                  size: 50,
                                 ),
                         ),
                       ),
@@ -618,10 +615,6 @@ class _addnewProductState extends State<addnewProduct> {
                     height: 200,
                     width: 370,
                     padding: EdgeInsets.all(10.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white38),
-                    ),
                     child: Container(
                       child: buildImagesGridView(images),
                     ),
@@ -695,9 +688,9 @@ class _addnewProductState extends State<addnewProduct> {
             title: Row(
               children: [
                 Icon(
-                  Icons.warning,
+                  Icons.error_outline,
                   size: 30,
-                  color: Colors.yellow,
+                  color: Colors.red,
                 ),
                 Text(
                   "  $header",
@@ -714,17 +707,21 @@ class _addnewProductState extends State<addnewProduct> {
               ),
             ),
             actions: <Widget>[
-              RaisedButton(
-                color: Colors.green,
-                child: Text("Ok", style: TextStyle(color: Colors.white)),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RaisedButton(
+                    color: Colors.green,
+                    child: Text("Ok", style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                  ),
+                ],
               ),
             ],
-            actionsPadding: EdgeInsets.only(right: 100),
           );
         });
   }
@@ -740,11 +737,9 @@ class _addnewProductState extends State<addnewProduct> {
       ),
       itemBuilder: (context, index) {
         if (index == im.length)
-          return Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white30),
-              borderRadius: BorderRadius.circular(0),
-            ),
+          return Card(
+            color: Colors.blueGrey[900],
+            elevation: 20,
             child: GestureDetector(
               onTap: () {
                 HapticFeedback.heavyImpact();
@@ -753,7 +748,7 @@ class _addnewProductState extends State<addnewProduct> {
               child: Icon(
                 Icons.add_photo_alternate_outlined,
                 size: 50,
-                color: Colors.white30,
+                color: Colors.white24,
               ),
             ),
           );
