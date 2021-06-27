@@ -80,8 +80,8 @@ class _ProductState extends State<Product> {
           "model": mod,
         }),
       );
-      print(cat + " " + veh + " " + mod);
       data = jsonDecode(res.body);
+      print(data.toString());
       validateReq(data);
       setState(() {
         result = data["result"];
@@ -165,7 +165,6 @@ class _ProductState extends State<Product> {
     await getModelList();
     mod = modelList[0];
     await getdata();
-    print(data.toString() + "dasdas");
   }
 
   @override
@@ -242,6 +241,13 @@ class _ProductState extends State<Product> {
                       mod = "NO DATA";
                       modelList = [];
                       refreshModelData();
+                    });
+                  },
+                  modelChange: (String name) {
+                    setState(() {
+                      mod = name;
+                      data = null;
+                      getdata();
                     });
                   },
                 )

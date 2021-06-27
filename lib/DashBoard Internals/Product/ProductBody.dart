@@ -13,6 +13,7 @@ class ProductBody extends StatefulWidget {
     @required this.model,
     @required this.data,
     @required this.vehicleChange,
+    @required this.modelChange,
     @required this.vehname,
     @required this.modelname,
   }) : super(key: key);
@@ -20,6 +21,7 @@ class ProductBody extends StatefulWidget {
   final List<String> names;
   final List<String> model;
   final Function(String) vehicleChange;
+  final Function(String) modelChange;
   var data;
   final String vehname;
   final String modelname;
@@ -93,7 +95,7 @@ class _ProductBodyState extends State<ProductBody> {
             ],
           ),
           Expanded(
-            child: (widget.data != null)
+            child: (widget.data != null && widget.data.length > 0)
                 ? Padding(
                     padding: const EdgeInsets.all(10),
                     child: GridView.builder(
@@ -110,7 +112,12 @@ class _ProductBodyState extends State<ProductBody> {
                           press: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (contex) => DetailPage()),
+                                  builder: (contex) => DetailPage(
+                                    data: widget.data[index],
+                                    vehiclename: names[selectedindex],
+                                    model: dropDown,
+                                  ),
+                                ),
                               )),
                     ),
                   )
@@ -210,6 +217,7 @@ class _ProductBodyState extends State<ProductBody> {
           HapticFeedback.heavyImpact();
           setState(() {
             dropDown = newValue;
+            widget.modelChange(dropDown);
           });
         },
       ),

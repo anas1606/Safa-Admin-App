@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:toast/toast.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage({Key key}) : super(key: key);
+  DetailPage({
+    Key key,
+    @required this.data,
+    @required this.vehiclename,
+    @required this.model,
+  }) : super(key: key);
 
+  var data;
+  final String vehiclename;
+  final String model;
   @override
   _DetailPageState createState() => _DetailPageState();
 }
@@ -45,207 +54,230 @@ class _DetailPageState extends State<DetailPage> {
         shadowColor: Colors.blueGrey[550],
         automaticallyImplyLeading: false,
       ),
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.3),
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.12,
-                  left: 20,
-                ),
-                //height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.white12, Colors.transparent],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(50),
-                    topRight: Radius.circular(50),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+      body: (widget.data != null)
+          ? SingleChildScrollView(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.3),
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.12,
+                        left: 20,
+                      ),
+                      //height: MediaQuery.of(context).size.height,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.white12, Colors.transparent],
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(50),
+                          topRight: Radius.circular(50),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Text(
-                                "Brand",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Brand",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.vehiclename,
+                                      style: TextStyle(
+                                        color: Colors.cyan[400],
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                "EICHER",
-                                style: TextStyle(
-                                  color: Colors.cyan[400],
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Model",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.model,
+                                      style: TextStyle(
+                                        color: Colors.cyan[400],
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Type",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(
+                                      widget.data["type"],
+                                      style: TextStyle(
+                                        color: Colors.cyan[400],
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Model",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 80.0),
+                            child: Container(
+                              height: 200,
+                              width: 370,
+                              padding: EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.white38),
                               ),
-                              Text(
-                                "Pro 3110",
-                                style: TextStyle(
-                                  color: Colors.cyan[400],
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              child: Container(
+                                child: buildImagesGridView(getList()),
                               ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Type",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                "DLX",
-                                style: TextStyle(
-                                  color: Colors.cyan[400],
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 80.0),
-                      child: Container(
-                        height: 200,
-                        width: 370,
-                        padding: EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.white38),
-                        ),
-                        child: Container(
-                          child: buildImagesGridView(getList()),
-                        ),
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.data["productName"],
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4
+                                .copyWith(
+                                    color: Colors.white54,
+                                    fontFamily: "fugzOne"),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 20.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "Price\n",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6
+                                            .copyWith(
+                                                color: Colors.white54,
+                                                fontFamily: "fugzOne"),
+                                      ),
+                                      TextSpan(
+                                        text: "Rs " + widget.data["rate"],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5
+                                            .copyWith(
+                                                color: Colors.amber[300],
+                                                fontFamily: "fugzOne"),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 15,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 8.0, left: 2.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      HapticFeedback.heavyImpact();
+                                      showDialog(
+                                          context: context,
+                                          builder: (contex) {
+                                            return priceDailog();
+                                          });
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.white54,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: AspectRatio(
+                                  aspectRatio: 95 / 100,
+                                  child: SizedBox(
+                                    height: 200,
+                                    child: (widget.data["coverImageUrl"] ==
+                                            null)
+                                        ? Icon(
+                                            Icons.add_photo_alternate_outlined,
+                                            size: 200,
+                                            color: Colors.white24)
+                                        : Image.network(
+                                            widget.data["coverImageUrl"],
+                                            fit: BoxFit.scaleDown,
+                                          ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
                       ),
                     )
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "FENDER",
-                      style: Theme.of(context).textTheme.headline4.copyWith(
-                          color: Colors.white54, fontFamily: "fugzOne"),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 20.0),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Price\n",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline6
-                                      .copyWith(
-                                          color: Colors.white54,
-                                          fontFamily: "fugzOne"),
-                                ),
-                                TextSpan(
-                                  text: "Rs 5000",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline5
-                                      .copyWith(
-                                          color: Colors.amber[300],
-                                          fontFamily: "fugzOne"),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 15,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 8.0, left: 2.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                HapticFeedback.heavyImpact();
-                                showDialog(
-                                    context: context,
-                                    builder: (contex) {
-                                      return priceDailog();
-                                    });
-                              },
-                              child: Icon(
-                                Icons.edit,
-                                color: Colors.white54,
-                                size: 25,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: AspectRatio(
-                            aspectRatio: 95 / 100,
-                            child: SizedBox(
-                                height: 200,
-                                child: Image.asset(
-                                  "asset/fender2.png",
-                                  fit: BoxFit.scaleDown,
-                                )),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
+            )
+          : Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.blueGrey[900],
+              child: SpinKitFadingGrid(
+                color: Colors.white60,
+                size: 50.0,
+                shape: BoxShape.rectangle,
+              ),
+            ),
     );
   }
 
@@ -280,7 +312,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget priceDailog() {
     return StatefulBuilder(
       builder: (BuildContext context, setState) {
-        _textController.text = "5000";
+        _textController.text = widget.data["rate"];
         return FittedBox(
           child: Dialog(
             backgroundColor: Colors.transparent,
