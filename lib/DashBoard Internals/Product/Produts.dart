@@ -22,7 +22,6 @@ class _ProductState extends State<Product> {
 
   final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
   var data;
-  var result;
   String token;
   List<String> categoryList;
   var category;
@@ -81,10 +80,8 @@ class _ProductState extends State<Product> {
         }),
       );
       data = jsonDecode(res.body);
-      print(data.toString());
       validateReq(data);
       setState(() {
-        result = data["result"];
         data = data["data"];
       });
     } catch (e) {
@@ -371,9 +368,4 @@ class _ProductState extends State<Product> {
           );
         });
   }
-}
-
-List<String> getlist() {
-  List<String> a = ["TRUCK", "CAR", "TRACTOR", "JEEP"];
-  return a;
 }

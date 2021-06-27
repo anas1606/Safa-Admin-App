@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 
 class DetailPage extends StatefulWidget {
   DetailPage({
@@ -21,6 +27,129 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   final _textController = TextEditingController();
+  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  bool progress = false;
+  var media;
+  List<File> imag = <File>[];
+  File _img;
+  File _coverImage;
+  List<String> mediaList;
+  String token;
+
+  gettoken() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var session = pref.getString('session');
+    token = session;
+  }
+
+  validateReq(var data) async {
+    if (data["statusCode"] == 401) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.remove('session');
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("loginpage", (route) => false);
+    } else if (data["statusCode"] == null) {
+      PopUpDialog(data["message"], data["status"], "Error");
+    } else if (data["statusCode"] != 200) {
+      PopUpDialog(data["message"], data["statusCode"], "Somthing Worng");
+    }
+  }
+
+  getMedias() async {
+    try {
+      String id = widget.data["productID"];
+      var url = "$prefix/api/admin/product/get/media/$id";
+      var res = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': "Bearer $token",
+        },
+      );
+      media = jsonDecode(res.body);
+      validateReq(media);
+
+      setState(() {
+        mediaList = new List<String>.from(media["data"]);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  startup() async {
+    await gettoken();
+    await getMedias();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startup();
+  }
+
+  _imgFromCamera(bool flag, int index) async {
+    var image = await ImagePicker().getImage(
+      source: ImageSource.camera,
+      imageQuality: 25,
+    );
+
+    setState(() {
+      _img = File(image.path);
+      if (flag)
+        imag.insert(index - mediaList.length, _img);
+      else
+        _coverImage = _img;
+    });
+  }
+
+  _imgFromGallery(bool flag, int index) async {
+    var image = await ImagePicker().getImage(
+      source: ImageSource.gallery,
+      imageQuality: 25,
+    );
+
+    setState(() {
+      _img = File(image.path);
+      if (flag)
+        imag.insert(index - mediaList.length, _img);
+      else
+        _coverImage = _img;
+    });
+  }
+
+  void _showPicker(context, bool flag, int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  new ListTile(
+                    leading: new Icon(Icons.photo_library),
+                    title: new Text('Photo Library'),
+                    onTap: () {
+                      _imgFromGallery(flag, index);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  new ListTile(
+                    leading: new Icon(Icons.photo_camera),
+                    title: new Text('Camera'),
+                    onTap: () {
+                      _imgFromCamera(flag, index);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,15 +288,83 @@ class _DetailPageState extends State<DetailPage> {
                               height: 200,
                               width: 370,
                               padding: EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.white38),
-                              ),
                               child: Container(
-                                child: buildImagesGridView(getList()),
+                                child: (mediaList != null)
+                                    ? buildImagesGridView(mediaList)
+                                    : Container(
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        color: Colors.blueGrey[900],
+                                        child: SpinKitFadingGrid(
+                                          color: Colors.white60,
+                                          size: 50.0,
+                                          shape: BoxShape.rectangle,
+                                        ),
+                                      ),
                               ),
                             ),
-                          )
+                          ),
+                          SizedBox(
+                            height: 15.0,
+                          ),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                HapticFeedback.heavyImpact();
+                                //addproduct();
+                                setState(() {});
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Icon(
+                                    Icons.update,
+                                    size: 30,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "UPDATE",
+                                    style: TextStyle(fontSize: 24),
+                                  ),
+                                  if (progress)
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: SpinKitHourGlass(
+                                        color: Colors.blueAccent,
+                                        size: 30,
+                                      ),
+                                    )
+                                ],
+                              ),
+                              style: ButtonStyle(
+                                foregroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.blueAccent),
+                                backgroundColor:
+                                    MaterialStateProperty.all<Color>(
+                                        Colors.blueGrey[900]),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      side:
+                                          BorderSide(color: Colors.blueAccent)),
+                                ),
+                                padding: MaterialStateProperty.all<EdgeInsets>(
+                                    EdgeInsets.only(
+                                        left: 20.0,
+                                        right: 30.0,
+                                        top: 10.0,
+                                        bottom: 10.0)),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -241,26 +438,58 @@ class _DetailPageState extends State<DetailPage> {
                                   ),
                                 ),
                               ),
+                              SizedBox(
+                                width: 20,
+                              ),
                               Expanded(
+                                flex: 1,
                                 child: AspectRatio(
-                                  aspectRatio: 95 / 100,
+                                  aspectRatio: 100 / 100,
                                   child: SizedBox(
-                                    height: 200,
-                                    child: (widget.data["coverImageUrl"] ==
-                                            null)
-                                        ? Icon(
-                                            Icons.add_photo_alternate_outlined,
-                                            size: 200,
-                                            color: Colors.white24)
-                                        : Image.network(
-                                            widget.data["coverImageUrl"],
-                                            fit: BoxFit.scaleDown,
-                                          ),
-                                  ),
+                                      height: 200,
+                                      child: (widget.data["coverImageUrl"] ==
+                                                  null &&
+                                              _coverImage == null)
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                HapticFeedback.heavyImpact();
+                                                _showPicker(context, false, 0);
+                                              },
+                                              child: Icon(
+                                                  Icons
+                                                      .add_photo_alternate_outlined,
+                                                  size: 200,
+                                                  color: Colors.white24),
+                                            )
+                                          : (widget.data["coverImageUrl"] !=
+                                                      null &&
+                                                  _coverImage == null)
+                                              ? CachedNetworkImage(
+                                                  imageUrl: widget
+                                                      .data["coverImageUrl"],
+                                                  fit: BoxFit.scaleDown,
+                                                  placeholder: (context, url) =>
+                                                      SpinKitCircle(
+                                                          color:
+                                                              Colors.white24),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Icon(Icons.error),
+                                                )
+                                              : ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(0),
+                                                  child: Image.file(
+                                                    _coverImage,
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.fitHeight,
+                                                  ),
+                                                )),
                                 ),
                               )
                             ],
-                          )
+                          ),
                         ],
                       ),
                     )
@@ -284,27 +513,56 @@ class _DetailPageState extends State<DetailPage> {
   Widget buildImagesGridView(List<String> images) {
     return GridView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: images.length + 1,
+      itemCount: ((images.length) + (imag.length) == 4)
+          ? images.length + imag.length
+          : images.length + imag.length + 1,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
         childAspectRatio: 100 / 100,
         mainAxisSpacing: 10,
       ),
       itemBuilder: (context, index) {
-        if (index == images.length)
-          return Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white30),
-              borderRadius: BorderRadius.circular(0),
+        if (index == (images.length + imag.length))
+          return GestureDetector(
+            onTap: () {
+              HapticFeedback.heavyImpact();
+              _showPicker(context, true, index);
+            },
+            child: Card(
+              color: Colors.blueGrey[900],
+              elevation: 20,
+              child: Icon(
+                Icons.add_photo_alternate_outlined,
+                size: 50,
+                color: Colors.white24,
+              ),
             ),
-            child: Icon(
-              Icons.add_photo_alternate_outlined,
-              size: 50,
-              color: Colors.white30,
+          );
+        else if (index < images.length)
+          return Card(
+            color: Colors.blueGrey[900],
+            elevation: 20,
+            child: CachedNetworkImage(
+              imageUrl: images[index],
+              placeholder: (context, url) =>
+                  SpinKitCircle(color: Colors.white24),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           );
         else
-          return Container(child: Image.asset(images[index]));
+          return Card(
+            color: Colors.blueGrey[900],
+            elevation: 20,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(0),
+              child: Image.file(
+                imag[index - images.length],
+                width: 180,
+                height: 250,
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+          );
       },
     );
   }
@@ -471,15 +729,54 @@ class _DetailPageState extends State<DetailPage> {
       },
     );
   }
-}
 
-List<String> getList() {
-  return [
-    "asset/pic2.jpeg",
-    "asset/pic2.jpeg",
-    "asset/pic2.jpeg",
-    "asset/fender.png",
-    "asset/jam.jpeg",
-    "asset/fender.jpeg"
-  ];
+  PopUpDialog(String msg, int code, String header) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            buttonPadding: EdgeInsets.all(15),
+            backgroundColor: Colors.blueGrey[900],
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20))),
+            title: Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  size: 30,
+                  color: Colors.yellow,
+                ),
+                Text(
+                  "  $header",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                )
+              ],
+            ),
+            content: Text(
+              "$msg \nErrorCode: $code",
+              style: TextStyle(
+                color: Colors.white70,
+              ),
+            ),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RaisedButton(
+                    color: Colors.green,
+                    child: Text("Ok", style: TextStyle(color: Colors.white)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
+  }
 }

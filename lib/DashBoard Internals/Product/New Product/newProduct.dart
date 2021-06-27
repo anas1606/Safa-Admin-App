@@ -223,7 +223,7 @@ class _addnewProductState extends State<addnewProduct> {
   _imgFromCamera(bool flag) async {
     var image = await ImagePicker().getImage(
       source: ImageSource.camera,
-      imageQuality: 50,
+      imageQuality: 25,
     );
 
     setState(() {

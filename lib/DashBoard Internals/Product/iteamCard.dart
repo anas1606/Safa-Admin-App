@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class IteamCard extends StatefulWidget {
   IteamCard({
@@ -37,7 +39,12 @@ class _IteamCardState extends State<IteamCard> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: (widget.data["coverImageUrl"] != null)
-                    ? Image.network(widget.data["coverImageUrl"])
+                    ? CachedNetworkImage(
+                        imageUrl: widget.data["coverImageUrl"],
+                        placeholder: (context, url) =>
+                            SpinKitCircle(color: Colors.white24),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      )
                     : Icon(
                         Icons.image_outlined,
                         size: 80,
