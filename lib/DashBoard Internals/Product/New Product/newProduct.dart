@@ -196,12 +196,13 @@ class _addnewProductState extends State<addnewProduct> {
   refreshModelData() async {
     await getModelList();
     mod = modelList[0];
-    //await getdata();
+    await getdata();
   }
 
   getdata() async {
     setState(() {});
   }
+
 
   startup() async {
     await gettoken();

@@ -78,6 +78,55 @@ class _DetailPageState extends State<DetailPage> {
     }
   }
 
+  var data;
+  updateProduct() async {
+    setState(() {
+      progress = true;
+    });
+    String id = widget.data["productID"];
+    var url = "$prefix/api/admin/product/update";
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': "Bearer $token",
+    };
+
+    var req = await http.MultipartRequest('PUT', Uri.parse(url));
+    req.headers.addAll(header);
+    req.fields['data'] = jsonEncode(<String, String>{
+      "productID": id,
+      "rate": widget.data["rate"].toString(),
+    });
+
+    if (imag.length >= 1)
+      req.files.add(await http.MultipartFile.fromPath('image1', imag[0].path));
+    if (imag.length >= 2)
+      req.files.add(await http.MultipartFile.fromPath('image2', imag[1].path));
+    if (imag.length >= 3)
+      req.files.add(await http.MultipartFile.fromPath('image2', imag[2].path));
+    if (imag.length == 4)
+      req.files.add(await http.MultipartFile.fromPath('image3', imag[3].path));
+    if (_coverImage != null)
+      req.files.add(
+          await http.MultipartFile.fromPath('coverimage', _coverImage.path));
+
+    var res = await http.Response.fromStream(await req.send());
+    data = jsonDecode(res.body);
+    validateReq(data);
+    setState(() {
+      if (data["statusCode"] == 200) {
+        progress = false;
+        Toast.show(
+          "Product Updated",
+          context,
+          duration: 1,
+          gravity: Toast.BOTTOM,
+          backgroundColor: Colors.blue,
+        );
+      }
+    });
+  }
+
   startup() async {
     await gettoken();
     await getMedias();
@@ -228,7 +277,7 @@ class _DetailPageState extends State<DetailPage> {
                                     Text(
                                       widget.vehiclename,
                                       style: TextStyle(
-                                        color: Colors.cyan[400],
+                                        color: Colors.orange[800],
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -250,7 +299,7 @@ class _DetailPageState extends State<DetailPage> {
                                     Text(
                                       widget.model,
                                       style: TextStyle(
-                                        color: Colors.cyan[400],
+                                        color: Colors.orange[800],
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -272,7 +321,7 @@ class _DetailPageState extends State<DetailPage> {
                                     Text(
                                       widget.data["type"],
                                       style: TextStyle(
-                                        color: Colors.cyan[400],
+                                        color: Colors.orange[800],
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -313,8 +362,7 @@ class _DetailPageState extends State<DetailPage> {
                             child: ElevatedButton(
                               onPressed: () {
                                 HapticFeedback.heavyImpact();
-                                //addproduct();
-                                setState(() {});
+                                updateProduct();
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -389,30 +437,40 @@ class _DetailPageState extends State<DetailPage> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 20.0),
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "Price\n",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline6
-                                            .copyWith(
-                                                color: Colors.white54,
-                                                fontFamily: "fugzOne"),
-                                      ),
-                                      TextSpan(
-                                        text: "Rs " + widget.data["rate"],
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline5
-                                            .copyWith(
-                                                color: Colors.amber[300],
-                                                fontFamily: "fugzOne"),
-                                      ),
-                                    ],
+                              GestureDetector(
+                                onTap: () {
+                                  HapticFeedback.heavyImpact();
+                                  showDialog(
+                                      context: context,
+                                      builder: (contex) {
+                                        return priceDailog();
+                                      });
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 20.0),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: "Price\n",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline6
+                                              .copyWith(
+                                                  color: Colors.white54,
+                                                  fontFamily: "fugzOne"),
+                                        ),
+                                        TextSpan(
+                                          text: "Rs " + widget.data["rate"],
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline5
+                                              .copyWith(
+                                                  color: Colors.amber[300],
+                                                  fontFamily: "fugzOne"),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -690,6 +748,8 @@ class _DetailPageState extends State<DetailPage> {
                                   gravity: Toast.BOTTOM,
                                   backgroundColor: Colors.green,
                                 );
+                                widget.data["rate"] = _textController.text;
+                                setState((){});
                                 Navigator.pop(context);
                               },
                               color: Colors.green,
