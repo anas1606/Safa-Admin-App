@@ -121,7 +121,7 @@ class _SplashScreenState extends State<SplashScreen> {
                               color: Colors.black),
                         ),
                         linearStrokeCap: LinearStrokeCap.roundAll,
-                        progressColor: Colors.red,
+                        progressColor: Colors.green[800],
                         backgroundColor: Colors.grey,
                       ),
                     ],
