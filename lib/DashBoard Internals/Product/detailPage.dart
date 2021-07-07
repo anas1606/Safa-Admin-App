@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
+import 'package:safa_admin/Global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   final _textController = TextEditingController();
-  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
+  final prefix = GlobelValue.prefix;
   bool progress = false;
   var media;
   List<File> imag = <File>[];
@@ -749,7 +750,7 @@ class _DetailPageState extends State<DetailPage> {
                                   backgroundColor: Colors.green,
                                 );
                                 widget.data["rate"] = _textController.text;
-                                setState((){});
+                                setState(() {});
                                 Navigator.pop(context);
                               },
                               color: Colors.green,

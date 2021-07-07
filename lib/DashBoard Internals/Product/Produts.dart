@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/New%20Product/newProduct.dart';
 import 'package:safa_admin/DashBoard%20Internals/Product/ProductBody.dart';
+import 'package:safa_admin/Global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +21,7 @@ class _ProductState extends State<Product> {
   String veh;
   String mod;
 
-  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
+  final prefix = GlobelValue.prefix;
   var data;
   String token;
   List<String> categoryList;

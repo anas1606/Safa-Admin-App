@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
+import 'package:safa_admin/Global.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -15,7 +16,8 @@ class DashBoardDesign extends StatefulWidget {
 
 class _DashBoardDesignState extends State<DashBoardDesign> {
   String token;
-  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
+  final prefix = GlobelValue.prefix;
+  
   var data;
   getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -37,6 +39,7 @@ class _DashBoardDesignState extends State<DashBoardDesign> {
   }
 
   getData() async {
+    print(prefix);
     var url = "$prefix/api/admin/dasboard";
     var res = await http.get(Uri.parse(url), headers: {
       'Content-Type': 'application/json',

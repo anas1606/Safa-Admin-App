@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
+import 'package:safa_admin/Global.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +19,7 @@ class ButtonLogin extends StatefulWidget {
 }
 
 class _ButtonLoginState extends State<ButtonLogin> {
-  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
+  final prefix = GlobelValue.prefix;
   var data;
   bool processFlag = true;
 

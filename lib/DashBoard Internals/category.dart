@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:safa_admin/Decoraters/GradiantText.dart';
+import 'package:safa_admin/Global.dart';
 import 'package:safa_admin/chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:safa_admin/listinfoCard.dart';
@@ -19,7 +20,7 @@ class Category extends StatefulWidget {
 
 class _CategoryState extends State<Category> {
   final _textController = TextEditingController();
-  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
+  final prefix = GlobelValue.prefix;
   var data;
   var result;
 

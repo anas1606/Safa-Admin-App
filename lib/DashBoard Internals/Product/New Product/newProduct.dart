@@ -7,6 +7,7 @@ import 'package:safa_admin/Decoraters/GradiantText.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:safa_admin/Global.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +35,7 @@ class _addnewProductState extends State<addnewProduct> {
   var data;
   bool progress = false;
 
-  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
+  final prefix = GlobelValue.prefix;
   String token;
   gettoken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -202,7 +203,6 @@ class _addnewProductState extends State<addnewProduct> {
   getdata() async {
     setState(() {});
   }
-
 
   startup() async {
     await gettoken();

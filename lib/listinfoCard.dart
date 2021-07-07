@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:safa_admin/Global.dart';
 import 'Decoraters/GradiantText.dart';
 import 'package:toast/toast.dart';
 import 'package:http/http.dart' as http;
@@ -28,21 +29,7 @@ class ListInfoCard extends StatefulWidget {
 
 class _ListInfoCardState extends State<ListInfoCard> {
   final _textController = TextEditingController();
-  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
-  var token =
-      "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmFzQGdtYWlsLmNvbSIsInJvbGUiOlsiVVNFUiJdLCJ1c2VyVHlwZSI6WyJVU0VSIl0sImV4cCI6MTYyMzgzNTEzOSwiaWF0IjoxNjIzMjMwMzM5LCJhdXRob3JpdGllcyI6WyJBRE1JTiJdfQ.U_Upnd6cKgGuOeFpJxdOiF_7cI9SiwWJJAaI0ITTGjIOmQAQXS_cmHDPczuSc53Iwvn-ToWhq1JzcW3EO1rvtA";
-
-  var data;
-
-  updateCategory(String id, String status) async {
-    var url = "$prefix/api/admin/category/update/?id=$id&status=$status";
-    await http.put(Uri.parse(url), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
-    });
-  }
-
+  
   @override
   void initState() {
     super.initState();
