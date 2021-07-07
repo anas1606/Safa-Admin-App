@@ -19,7 +19,7 @@ class Category extends StatefulWidget {
 
 class _CategoryState extends State<Category> {
   final _textController = TextEditingController();
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   var data;
   var result;
 

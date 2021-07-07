@@ -27,7 +27,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   final _textController = TextEditingController();
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   bool progress = false;
   var media;
   List<File> imag = <File>[];

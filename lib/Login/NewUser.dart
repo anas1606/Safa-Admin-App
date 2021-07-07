@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:safa_admin/AlertDailog.dart';
 import 'package:safa_admin/Login/Widget/NewLname.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -29,7 +28,7 @@ class _NewUserState extends State<NewUser> {
   final _lnametextController = TextEditingController();
   final _emailtextController = TextEditingController();
   final _pswdtextController = TextEditingController();
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   bool processFlag = true;
   var data;
   String token;

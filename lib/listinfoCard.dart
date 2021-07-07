@@ -28,7 +28,7 @@ class ListInfoCard extends StatefulWidget {
 
 class _ListInfoCardState extends State<ListInfoCard> {
   final _textController = TextEditingController();
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   var token =
       "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhbmFzQGdtYWlsLmNvbSIsInJvbGUiOlsiVVNFUiJdLCJ1c2VyVHlwZSI6WyJVU0VSIl0sImV4cCI6MTYyMzgzNTEzOSwiaWF0IjoxNjIzMjMwMzM5LCJhdXRob3JpdGllcyI6WyJBRE1JTiJdfQ.U_Upnd6cKgGuOeFpJxdOiF_7cI9SiwWJJAaI0ITTGjIOmQAQXS_cmHDPczuSc53Iwvn-ToWhq1JzcW3EO1rvtA";
 

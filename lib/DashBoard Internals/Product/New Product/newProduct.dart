@@ -34,7 +34,7 @@ class _addnewProductState extends State<addnewProduct> {
   var data;
   bool progress = false;
 
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   String token;
   gettoken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();

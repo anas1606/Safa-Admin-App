@@ -20,7 +20,7 @@ class VehicaleNames extends StatefulWidget {
 class _VehicaleNamesState extends State<VehicaleNames> {
   final _textController = TextEditingController();
   String dropDown;
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   var data;
   List<String> categoryList;
   var category;

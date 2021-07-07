@@ -15,7 +15,7 @@ class DashBoardDesign extends StatefulWidget {
 
 class _DashBoardDesignState extends State<DashBoardDesign> {
   String token;
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   var data;
   getToken() async {
     SharedPreferences pref = await SharedPreferences.getInstance();

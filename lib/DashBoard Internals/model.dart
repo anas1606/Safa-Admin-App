@@ -21,7 +21,7 @@ class _ModelState extends State<Model> {
   final _textController = TextEditingController();
   String dropDown;
   String dropDown2;
-  final prefix = "http://ec2-52-21-110-171.compute-1.amazonaws.com";
+  final prefix = "http://ec2-23-23-12-171.compute-1.amazonaws.com";
   var data;
   List<String> categoryList;
   List<String> vehicleList;
