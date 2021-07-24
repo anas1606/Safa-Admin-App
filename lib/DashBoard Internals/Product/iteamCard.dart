@@ -73,9 +73,7 @@ class _IteamCardState extends State<IteamCard> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 40.0,
-                ),
+                new Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(left: 10, top: 5),
                   child: Text(
