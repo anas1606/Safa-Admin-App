@@ -426,7 +426,7 @@ class _DetailPageState extends State<DetailPage> {
                             widget.data["productName"],
                             style: Theme.of(context)
                                 .textTheme
-                                .headline4
+                                .headline5
                                 .copyWith(
                                     color: Colors.white54,
                                     fontFamily: "fugzOne"),

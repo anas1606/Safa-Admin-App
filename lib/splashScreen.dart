@@ -52,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     children: <Widget>[
                       CircleAvatar(
                         radius: 100,
-                        backgroundImage: AssetImage("asset/splash/safalogo.jpeg"),
+                        backgroundImage: AssetImage("asset/splash/safalogo.png"),
                       ),
                       Padding(padding: EdgeInsets.only(top: 10)),
                       Text(

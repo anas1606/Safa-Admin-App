@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.safa_admin">
    <application
-        android:label="Safa Enterprise Admin"
+        android:label="Safa Admin"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
         <activity
